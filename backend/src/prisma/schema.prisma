@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Chapters {
+  ChapterID     Int       @id(map: "PK__Chapters__0893A34AF7D2FB6C") @default(autoincrement())
+  StoryID       Int?
+  Title         String    @db.NVarChar(100)
+  Content       String?   @db.NVarChar(Max)
+  ChapterNumber Int?
+  CreatedAt     DateTime? @default(now(), map: "DF__Chapters__Create__440B1D61") @db.DateTime
+  UpdatedAt     DateTime? @default(now(), map: "DF__Chapters__Update__44FF419A") @db.DateTime
+  ImagePath     String?   @default("default-chapter-image.jpg", map: "DF__Chapters__ImageP__45F365D3") @db.NVarChar(Max)
+}
+
+model ReadingLists {
+  ReadingListID Int       @id(map: "PK__ReadingL__BB5FDDBAEABC46E9") @default(autoincrement())
+  UserID        Int?
+  StoryID       Int?
+  AddedAt       DateTime? @default(now(), map: "DF__ReadingLi__Added__4BAC3F29") @db.DateTime
+
+}
+
+model Stories {
+  StoryID        Int            @id(map: "PK__Stories__3E82C0283B8E29CB") @default(autoincrement())
+  Title          String         @db.NVarChar(100)
+  Description    String?        @db.NVarChar(Max)
+  AuthorID       Int?
+  Status         String?        @default("draft", map: "DF__Stories__Status__3D5E1FD2") @db.NVarChar(20)
+  CreatedAt      DateTime?      @default(now(), map: "DF__Stories__Created__3E52440B") @db.DateTime
+  UpdatedAt      DateTime?      @default(now(), map: "DF__Stories__Updated__3F466844") @db.DateTime
+  Genre          String?        @db.NVarChar(50)
+  MaturityRating String?        @db.NVarChar(20)
+  ImagePath      String?        @default("default-story-image.jpg", map: "DF__Stories__ImagePa__403A8C7D") @db.NVarChar(Max)
+}
+
+
+
+model Users {
+  UserID       Int            @id @default(autoincrement()) // Clave primaria
+  Username     String         @db.NVarChar(50)             // No nulo
+  Email        String         @unique @db.NVarChar(100)    // Único y no nulo
+  CreatedAt    DateTime?      @db.DateTime                // Puede ser nulo
+  Password     String?        @db.NVarChar(255)           // Puede ser nulo
+}
