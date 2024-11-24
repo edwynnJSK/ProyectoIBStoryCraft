@@ -46,5 +46,5 @@ model Users {
   Username     String         @db.NVarChar(50)             // No nulo
   Email        String         @unique @db.NVarChar(100)    // Único y no nulo
   CreatedAt    DateTime?      @db.DateTime                // Puede ser nulo
-  Password     String?        @db.NVarChar(255)           // Puede ser nulo
+  Password     String        @db.NVarChar(255)           // Puede ser nulo
 }

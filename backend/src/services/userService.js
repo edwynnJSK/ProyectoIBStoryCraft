@@ -12,6 +12,7 @@ export const createUser = async (username, email) => {
     data: {
       Username: username,
       Email: email,
+      Password: "12345"
     },
   });
 };
