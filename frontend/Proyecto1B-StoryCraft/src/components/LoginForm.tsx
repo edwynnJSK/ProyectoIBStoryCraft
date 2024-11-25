@@ -14,17 +14,13 @@ const LoginForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Llamada a la API de login
       const response = await loginUser({ Email:email, 
                                          Password:password });
       
       // Verificamos que los datos existan
       if (response.UserID && response.Username) {
-        // Guardamos el ID de usuario y el nombre en el contexto
-        login(response.Username, response.UserID); // Aquí guardamos el nombre y el ID de usuario
-
-        // Redirigir al usuario a la página principal después de login
-        navigate('/dashboard'); // O la página donde debe ir el usuario después de loguearse
+        login(response.Username, response.UserID); 
+        navigate('/dashboard'); 
       } else {
         setError('Invalid email or password');
       }

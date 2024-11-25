@@ -2,7 +2,7 @@ import { useAuth } from "../context/AuthContext";
 import Chat from "./Chat";
 
 const Dashboard: React.FC = () => {
-    const { username } = useAuth();  // Obtener el nombre de usuario desde el contexto
+    const { username } = useAuth(); 
 
     return (
       <div>

@@ -1,12 +1,10 @@
 import prisma from '../prisma/client.js';
 import bcrypt from 'bcryptjs'; 
 
-// Servicio para obtener todos los usuarios
 export const getAllUsers = async () => {
-  return prisma.users.findMany(); // Acceder a la tabla 'user' a través de 'prisma'
+  return prisma.users.findMany();
 };
 
-// Servicio para crear un nuevo usuario
 export const createUser = async (username, email) => {
   return prisma.users.create({
     data: {
@@ -19,7 +17,6 @@ export const createUser = async (username, email) => {
 
 export const updateUserByID = async (userID, data) => {
   try {
-    // Filtra solo los campos que tienen valores
     const filteredData = {};
     for (const key in data) {
       if (data[key] !== undefined) {
@@ -50,30 +47,18 @@ export const deleteUserByID = async (userID) => {
 
 export const authenticateUser = async (email, password) => {
   try{
-    // Buscar el usuario en la base de datos utilizando Prisma
+    
     const user = await prisma.users.findUnique({
-      where: { Email: email, Password:password },  // Busca al usuario por el email
+      where: { Email: email, Password:password },
       select: {
-        UserID: true,    // Selecciona el campo UserID
-        Username: true,  // Selecciona el campo Username
+        UserID: true,    
+        Username: true,  
       },
     });
-     // Si el usuario no se encuentra, lanza un error
      if (!user) {
       throw new Error('User not found');
     }
-
-    // Validación del password usando bcryptjs
-    //const passwordMatch = password == user.Password;  // Compara el password proporcionado con el guardado
-
-    /*if (!passwordMatch) {
-      throw new Error('Incorrect password');
-    }*/
-
-    // Si las credenciales son correctas, devuelve el usuario (sin el password)
-    //const { Password, ...userData } = user;  // Elimina el campo Password de la respuesta
-
-    return user;  // Devuelve el usuario sin el campo Password
+    return user; 
   }catch (error){
     console.error(error);
     throw new Error('Error finding user');

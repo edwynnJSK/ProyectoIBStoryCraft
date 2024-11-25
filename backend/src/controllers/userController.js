@@ -1,11 +1,11 @@
-import { getAllUsers, createUser, updateUserByID, deleteUserByID,authenticateUser} from '../services/userService.js'; // Importar los servicios de usuario
+import { getAllUsers, createUser, updateUserByID, deleteUserByID,authenticateUser} from '../repositories/userRepositorie.js'
 
 export const getUsers = async (req, res) => {
     try {
       const users = await getAllUsers();
       res.json(users);
     } catch (error) {
-        console.error("Error fetching users:", error); // Imprime el error en la consola
+        console.error("Error fetching users:", error); 
       res.status(500).json({ error: 'Error fetching users', cause:error });
     }
   };

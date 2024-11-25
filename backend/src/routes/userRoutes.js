@@ -10,7 +10,7 @@ router.get('/users', getUsers);
 router.post('/users', addUser);
 
 // Ruta para actualizar un usuario por ID
-router.put('/users/:userID', updateUser);
+router.patch('/users/:userID', updateUser);
 
 // Ruta para eliminar un usuario por ID
 router.delete('/users/:userID', deleteUser);

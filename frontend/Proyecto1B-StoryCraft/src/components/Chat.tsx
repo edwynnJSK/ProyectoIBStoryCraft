@@ -9,7 +9,6 @@ const Chat: React.FC = () => {
     const { username } = useAuth();
     const socketRef = useRef<WebSocket | null>(null);
 
- // Conectar con el servidor WebSocket al montar el componente
  useEffect(() => {
     const protocol = window.location.protocol === "https:" ? "wss" : "ws";
     const socketUrl = `${protocol}://localhost:3001`;
@@ -22,15 +21,12 @@ const Chat: React.FC = () => {
     });
 
     socket.addEventListener("message", (event) => {
-        const decodedMessage = JSON.parse(event.data); // Decodificar el mensaje
-        // Agregar el mensaje recibido a la lista
+        const decodedMessage = JSON.parse(event.data);
         setMessages((prev) => [
           ...prev,
           { sender: decodedMessage.sender, text: decodedMessage.text },
         ]);
       });
-
-    // Limpieza al desmontar el componente
     return () => {
       if (socketRef.current) {
         socketRef.current.close();
@@ -47,13 +43,12 @@ const Chat: React.FC = () => {
 
     const displayName = username?.trim() === "" ? "Anonymous" : username;
     const userMessage = {
-        sender: displayName,  // Nombre del usuario
-        text: message,        // Contenido del mensaje
+        sender: displayName, 
+        text: message,      
       };
 
-    // Enviar mensaje al servidor WebSocket
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-        socketRef.current.send(JSON.stringify(userMessage)); // Envías el objeto JSON
+        socketRef.current.send(JSON.stringify(userMessage));
         console.log("Message sent:", message);
     }
 
@@ -61,7 +56,7 @@ const Chat: React.FC = () => {
         ...prev,
         { sender: "You", text: message },
       ]);
-      setMessage(""); // Limpiar el campo de entrada
+      setMessage("");
   };
 
 
