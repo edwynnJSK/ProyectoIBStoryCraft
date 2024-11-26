@@ -10,7 +10,7 @@ export const getStories = async (req, res) => {
     }
   };
 
-export const addStory = async (req, res) => {
+  export const addStory = async (req, res) => {
     const { Title, Description, AuthorID, Genre, MaturityRating, ImagePath } = req.body;
     try {
       const newStory = await createStory({
@@ -27,6 +27,8 @@ export const addStory = async (req, res) => {
       res.status(500).json({ error: "Error creating story", cause: error });
     }
   };
+
+        
   
   export const getStory = async (req, res) => {
     try {
