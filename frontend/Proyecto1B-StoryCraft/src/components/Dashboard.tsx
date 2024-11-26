@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../context/AuthContext";
-import { getStories } from '../api/storiesAPI';
+import { getStories, getStoryById, Story, Chapter, getChaptersByStoryId } from '../api/storiesAPI';
 import Chat from "./Chat";
 import CreateStory from './CreateStory';
-
-// Actualiza la interfaz para que coincida con tu modelo de backend
-interface Story {
-    StoryID: number;
-    Title: string;
-    ImagePath: string;
-    Genre: string;
-}
+import CreateStoryDrawer from './CreateStoryDrawer';
 
 const Dashboard: React.FC = () => {
     const { username } = useAuth(); 
@@ -20,8 +13,11 @@ const Dashboard: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+    const [selectedCreatedStory, setSelectedCreatedStory] = useState<Story | null>(null);
     const [isCreateStoryModalVisible, setIsCreateStoryModalVisible] = useState(false);
- 
+    const [storyChapters, setStoryChapters] = useState<Chapter[]>([]);
+    const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null);
+
     useEffect(() => {
         const fetchStories = async () => {
             try {
@@ -38,16 +34,28 @@ const Dashboard: React.FC = () => {
         fetchStories();
     }, []);
 
-    const handleStoryCreated = (newStory: Story) => {
-        // Añade la nueva historia al inicio de la lista
-        setStories(prevStories => [newStory, ...prevStories]);
+    const handleStoryCreated = (story: Story) => {
+        setSelectedCreatedStory(story);
     };
 
     const toggleDropdown = () => setIsOpen(!isOpen);
  
-    const handleStoryClick = (story: Story) => {
-        setSelectedStory(story);
-        toggleDropdown();
+    const handleStoryClick = async (story: Story) => {
+        try {
+            // Fetch full story details
+            const fullStoryDetails = await getStoryById(story.StoryID);
+            setSelectedStory(fullStoryDetails);
+            
+            // Fetch chapters for the story
+            const chapters = await getChaptersByStoryId(story.StoryID);
+            setStoryChapters(chapters);
+            
+            // Reset other states
+            setSelectedChapter(null);
+            toggleDropdown(); // Close dropdown if it's open
+        } catch (err) {
+            console.error('Error fetching story details:', err);
+        }
     };
  
     const toggleModal = () => {
@@ -62,22 +70,32 @@ const Dashboard: React.FC = () => {
         prologue: string;
         image: File | null;
     }) => {
-        // Here you can add logic to save the story, 
-        // including handling the image upload
         console.log('New story created:', storyData);
         
         if (storyData.image) {
-            // You might want to upload the image to your server here
-            // This could involve using FormData or a specific upload method
             const formData = new FormData();
             formData.append('image', storyData.image);
-            // Add other story details to formData as needed
         }
-        
-        // Optionally, refresh stories or add the new story to the list
     };
 
-    
+    const handleChapterClick = (chapter: Chapter) => {
+        setSelectedChapter(chapter);
+    };
+
+    const handleAddNewChapter = () => {
+        if (selectedStory) {
+            setSelectedCreatedStory(selectedStory);
+        }
+    };
+
+    const closeStoryModal = () => {
+        setSelectedStory(null);
+        setSelectedChapter(null);
+    };
+
+    const closeChapterModal = () => {
+        setSelectedChapter(null);
+    };
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -89,6 +107,21 @@ const Dashboard: React.FC = () => {
 
     return (
       <div>
+        <CreateStory 
+          show={isCreateStoryModalVisible}
+          onHide={() => setIsCreateStoryModalVisible(false)}
+          onStoryCreated={handleStoryCreated}
+        />
+
+        {/* CreateStoryDrawer for adding chapters */}
+        {selectedCreatedStory && (
+          <CreateStoryDrawer
+            show={!!selectedCreatedStory}
+            onHide={() => setSelectedCreatedStory(null)}
+            story={selectedCreatedStory}
+          />
+        )}
+
         <h1>Bienvenido al Dashboard</h1>
         {username ? (
           <>
@@ -116,16 +149,8 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
 
-                {/* CreateStory Modal */}
-                <CreateStory 
-                show={isCreateStoryModalVisible}
-                onHide={() => setIsCreateStoryModalVisible(false)}
-                onStoryCreated={handleStoryCreated}  // Añade este prop
-                />
-
                 <h2 className="mb-3">Historias Globales</h2>
 
-                {/* Rest of the Dashboard remains the same */}
                 <div className="d-flex flex-wrap justify-content-center">
                     {stories.map((story) => (
                         <div 
@@ -147,16 +172,140 @@ const Dashboard: React.FC = () => {
                     ))}
                 </div>
 
-                {/* Existing Story Modal */}
+                {/* Story Details Modal */}
                 {selectedStory && (
                     <div 
                         className="modal" 
                         style={{ 
                             display: 'block', 
-                            backgroundColor: 'rgba(0,0,0,0.5)' 
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            zIndex: 1000
                         }}
                     >
-                        {/* ... existing modal content ... */}
+                        <div 
+                            className="modal-dialog modal-lg" 
+                            style={{ 
+                                maxWidth: '800px',
+                                margin: '50px auto',
+                                backgroundColor: 'white',
+                                borderRadius: '10px',
+                                padding: '20px'
+                            }}
+                        >
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">{selectedStory.Title}</h5>
+                                    <button 
+                                        type="button" 
+                                        className="close" 
+                                        onClick={closeStoryModal}
+                                    >
+                                        &times;
+                                    </button>
+                                </div>
+                                <div className="modal-body">
+                                    <div className="row">
+                                        <div className="col-md-4">
+                                            <img 
+                                                src={`/images/${selectedStory.ImagePath}`} 
+                                                alt={selectedStory.Title} 
+                                                className="img-fluid" 
+                                            />
+                                        </div>
+                                        <div className="col-md-8">
+                                            <p>{selectedStory.Description || 'No description available'}</p>
+                                            <div>
+                                                <h6>Chapters</h6>
+                                                {storyChapters.length === 0 ? (
+                                                    <p>No chapters yet</p>
+                                                ) : (
+                                                    storyChapters.map(chapter => (
+                                                        <button 
+                                                            key={chapter.ChapterID} 
+                                                            className="btn btn-outline-primary m-1"
+                                                            onClick={() => handleChapterClick(chapter)}
+                                                        >
+                                                            {chapter.Title}
+                                                        </button>
+                                                    ))
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <button 
+                                        className="btn btn-primary" 
+                                        onClick={handleAddNewChapter}
+                                    >
+                                        Add New Chapter
+                                    </button>
+                                    <button 
+                                        className="btn btn-secondary" 
+                                        onClick={closeStoryModal}
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Chapter Content Modal */}
+                {selectedChapter && (
+                    <div 
+                        className="modal" 
+                        style={{ 
+                            display: 'block', 
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            zIndex: 1000
+                        }}
+                    >
+                        <div 
+                            className="modal-dialog modal-lg"
+                            style={{ 
+                                maxWidth: '800px',
+                                margin: '50px auto',
+                                backgroundColor: 'white',
+                                borderRadius: '10px',
+                                padding: '20px'
+                            }}
+                        >
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">{selectedChapter.Title}</h5>
+                                    <button 
+                                        type="button" 
+                                        className="close" 
+                                        onClick={closeChapterModal}
+                                    >
+                                        &times;
+                                    </button>
+                                </div>
+                                <div className="modal-body">
+                                    {selectedChapter.Content}
+                                </div>
+                                <div className="modal-footer">
+                                    <button 
+                                        className="btn btn-secondary" 
+                                        onClick={closeChapterModal}
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>

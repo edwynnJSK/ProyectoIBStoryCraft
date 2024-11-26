@@ -96,3 +96,19 @@ export const createStoryWithImage = async (storyData: Partial<Story>, imageName:
   const newStory = await createStory(storyDataWithImage);
   return newStory;
 };
+
+export const getChaptersByStoryId = async (storyID: number): Promise<Chapter[]> => {
+  const response = await fetch(`http://localhost:3001/api/stories/${storyID}/chapters`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch chapters for the story');
+  }
+
+  const chapters: Chapter[] = await response.json();
+  return chapters;
+};
