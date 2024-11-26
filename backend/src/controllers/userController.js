@@ -11,12 +11,19 @@ export const getUsers = async (req, res) => {
   };
   
   export const addUser = async (req, res) => {
-    const { Username, Email } = req.body;
+    const { Username, Email, Password } = req.body;
     try {
-      const newUser = await createUser(Username, Email);
-      res.status(201).json(newUser);
+      await createUser(Username, Email, Password);
+      res.status(201).json({ message: "Usuario creado exitosamente" });
     } catch (error) {
-      res.status(500).json({ error: 'Error creating user', cause:error });
+      // Controla errores personalizados
+    if (error.message.includes('correo electrónico')) {
+      res.status(400).json({ message: "El correo electrónico ya está registrado." });
+    } else if (error.message.includes('nombre de usuario')) {
+      res.status(400).json({ message: "El nombre de usuario ya está en uso." });
+    } else {
+      res.status(500).json({ message: "Error al crear el usuario"});
+    }
     }
   };
 

@@ -1,16 +1,34 @@
 import prisma from '../prisma/client.js';
 import bcrypt from 'bcryptjs'; 
+import { hashPassword } from '../services/Hash.js';
 
 export const getAllUsers = async () => {
   return prisma.users.findMany();
 };
 
-export const createUser = async (username, email) => {
+export const createUser = async (username, email, password) => {
+   const existingUser = await prisma.users.findFirst({
+    where: { Email: email},
+  });
+
+  if (existingUser) {
+    throw new Error('El correo electrónico ya está registrado.');
+  }
+
+  const existingUsername = await prisma.users.findFirst({
+    where: { Username: username},
+  });
+
+  if (existingUsername) {
+    throw new Error('El nombre de usuario ya está en uso.');
+  }
+
+  const hashedPassword = await hashPassword(password);
   return prisma.users.create({
     data: {
       Username: username,
       Email: email,
-      Password: "12345"
+      Password: hashedPassword
     },
   });
 };
@@ -47,18 +65,25 @@ export const deleteUserByID = async (userID) => {
 
 export const authenticateUser = async (email, password) => {
   try{
-    
     const user = await prisma.users.findUnique({
-      where: { Email: email, Password:password },
+      where: { Email: email},
       select: {
         UserID: true,    
-        Username: true,  
+        Username: true,
+        Password: true,  
       },
     });
      if (!user) {
       throw new Error('User not found');
     }
-    return user; 
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.Password)
+    if (!isPasswordCorrect) {
+      throw new Error('Invalid password');
+    }
+    return {UserID: user.UserID,
+            Username: user.Username
+    }; 
   }catch (error){
     console.error(error);
     throw new Error('Error finding user');

@@ -54,6 +54,7 @@ const LoginForm: React.FC = () => {
         </div>
         <button type="submit">Login</button>
       </form>
+      <button type="submit" onClick={()=>{navigate('/signup')}}>Sign Up</button>
     </div>
   );
 };
