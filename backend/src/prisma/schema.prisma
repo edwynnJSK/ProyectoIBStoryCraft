@@ -8,35 +8,35 @@ datasource db {
 }
 
 model Chapters {
-  ChapterID     Int       @id(map: "PK__Chapters__0893A34AF7D2FB6C") @default(autoincrement())
-  StoryID       Int?
+  ChapterID     Int       @id @default(autoincrement())
+  StoryID       Int?      @db.Int
   Title         String    @db.NVarChar(100)
   Content       String?   @db.NVarChar(Max)
-  ChapterNumber Int?
-  CreatedAt     DateTime? @default(now(), map: "DF__Chapters__Create__440B1D61") @db.DateTime
-  UpdatedAt     DateTime? @default(now(), map: "DF__Chapters__Update__44FF419A") @db.DateTime
-  ImagePath     String?   @default("default-chapter-image.jpg", map: "DF__Chapters__ImageP__45F365D3") @db.NVarChar(Max)
+  ChapterNumber Int?      @db.Int
+  CreatedAt     DateTime? @db.DateTime
+  UpdatedAt     DateTime? @db.DateTime
+  ImagePath     String?   @db.NVarChar(Max)
 }
 
 model ReadingLists {
-  ReadingListID Int       @id(map: "PK__ReadingL__BB5FDDBAEABC46E9") @default(autoincrement())
-  UserID        Int?
-  StoryID       Int?
-  AddedAt       DateTime? @default(now(), map: "DF__ReadingLi__Added__4BAC3F29") @db.DateTime
+  ReadingListID Int       @id @default(autoincrement())
+  UserID        Int?      @db.Int
+  StoryID       Int?      @db.Int
+  AddedAt       DateTime? @db.DateTime
 
 }
 
 model Stories {
-  StoryID        Int            @id(map: "PK__Stories__3E82C0283B8E29CB") @default(autoincrement())
+  StoryID        Int            @id @default(autoincrement())
   Title          String         @db.NVarChar(100)
   Description    String?        @db.NVarChar(Max)
-  AuthorID       Int?
-  Status         String?        @default("draft", map: "DF__Stories__Status__3D5E1FD2") @db.NVarChar(20)
-  CreatedAt      DateTime?      @default(now(), map: "DF__Stories__Created__3E52440B") @db.DateTime
-  UpdatedAt      DateTime?      @default(now(), map: "DF__Stories__Updated__3F466844") @db.DateTime
+  AuthorID       Int?           @db.Int
+  Status         String?        @db.NVarChar(20)
+  CreatedAt      DateTime?      @db.DateTime
+  UpdatedAt      DateTime?      @db.DateTime
   Genre          String?        @db.NVarChar(50)
   MaturityRating String?        @db.NVarChar(20)
-  ImagePath      String?        @default("default-story-image.jpg", map: "DF__Stories__ImagePa__403A8C7D") @db.NVarChar(Max)
+  ImagePath      String?        @db.NVarChar(Max)
 }
 
 
