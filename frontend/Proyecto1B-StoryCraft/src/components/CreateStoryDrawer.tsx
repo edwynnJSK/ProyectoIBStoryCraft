@@ -7,12 +7,14 @@ interface CreateStoryDrawerProps {
   show: boolean;
   onHide: () => void;
   story: Story;
+  onDashboardRefresh?: () => void;  // New prop for dashboard refresh
 }
 
 const CreateStoryDrawer: React.FC<CreateStoryDrawerProps> = ({ 
   show, 
   onHide, 
-  story 
+  story,
+  onDashboardRefresh  // Add new prop
 }) => {
   const navigate = useNavigate();
   const [chapterNumber, setChapterNumber] = useState(1);
@@ -106,6 +108,10 @@ const CreateStoryDrawer: React.FC<CreateStoryDrawerProps> = ({
     if (chapterCreated) {
       resetForm();
       onHide();
+      
+      // Trigger dashboard refresh if callback is provided
+      onDashboardRefresh && onDashboardRefresh();
+      
       navigate('/dashboard');
     }
   };

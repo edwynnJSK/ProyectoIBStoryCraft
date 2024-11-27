@@ -7,12 +7,14 @@ interface CreateStoryProps {
   show: boolean;
   onHide: () => void;
   onStoryCreated: (story: Story) => void;
+  onDashboardRefresh?: () => void;  // New prop for dashboard refresh
 }
 
 const CreateStory: React.FC<CreateStoryProps> = ({ 
   show, 
   onHide, 
-  onStoryCreated 
+  onStoryCreated,
+  onDashboardRefresh  // Add new prop 
 }) => {
   const { userID } = useAuth();
   const [storyDetails, setStoryDetails] = useState({
@@ -66,10 +68,14 @@ const CreateStory: React.FC<CreateStoryProps> = ({
         formData.append('Image', storyImage); 
       }
 
-    const newStory = await createStory(formData);
+      const newStory = await createStory(formData);
 
       // Call the callback to move to next step
       onStoryCreated(newStory);
+      
+      // Trigger dashboard refresh if callback is provided
+      onDashboardRefresh && onDashboardRefresh();
+      
       onHide(); // Close the modal
     } catch (err) {
       console.error('Error creating story:', err);

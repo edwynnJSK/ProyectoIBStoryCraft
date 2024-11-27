@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { getUsers, addUser,updateUser, deleteUser,authUser } from '../controllers/userController.js'; // Importar los controladores
 import { getStories,addStory, getStory, updateStory, deleteStory, } from '../controllers/storieController.js';
-import {getChapter,getChapters,addChapter,updateChapter,deleteChapter } from '../controllers/chapterController.js'
+import {getChapter,getChapters,addChapter,updateChapter,deleteChapter, getChaptersByStory  } from '../controllers/chapterController.js'
 
 const router = Router();
 
@@ -34,6 +34,8 @@ router.post('/chapters', addChapter)
 router.get('/chapters/:chapterID', getChapter);
 router.patch('/chapters/:chapterID', updateChapter)
 router.delete('/chapters/:chapterID', deleteChapter)
+
+router.get('/stories/:storyID/chapters', getChaptersByStory);
 
 /*
 //ReadingLists

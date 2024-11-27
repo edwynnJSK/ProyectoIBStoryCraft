@@ -1,4 +1,4 @@
-import {getAllChapters, getChapterByID,createChapter, updateChapterByID,deleteChapterByID} from '../repositories/chapterRepositorie.js'
+import {getAllChapters, getChapterByID,createChapter, updateChapterByID,deleteChapterByID, getChaptersByStoryIdInRepository} from '../repositories/chapterRepositorie.js'
 
 export const getChapters = async (req, res) => {
     try {
@@ -61,5 +61,16 @@ export const getChapters = async (req, res) => {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Error deleting chapter', cause: error });
+    }
+  };
+
+  export const getChaptersByStory = async (req, res) => {
+    const { storyID } = req.params;
+    try {
+      const chapters = await chapterRepository.getChaptersByStoryIdInRepository(storyID);
+      res.json(chapters);
+    } catch (error) {
+      console.error('Error fetching chapters:', error);
+      res.status(500).json({ error: 'Failed to fetch chapters for story' });
     }
   };
