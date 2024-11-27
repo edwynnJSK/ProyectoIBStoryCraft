@@ -1,4 +1,5 @@
 import {getAllChapters, getChapterByID,createChapter, updateChapterByID,deleteChapterByID} from '../repositories/chapterRepositorie.js'
+import { imageUploader } from "../services/ImageUploader.js";
 
 export const getChapters = async (req, res) => {
     try {
@@ -25,14 +26,39 @@ export const getChapters = async (req, res) => {
   };
   
   export const addChapter = async (req, res) => {
-    const { StoryID, Title, Content, ChapterNumber, ImagePath } = req.body;
-    try {
-      const newChapter = await createChapter(StoryID, Title, Content, ChapterNumber, ImagePath);
-      res.status(201).json(newChapter);
-    } catch (error) {
-      console.error("Error creating chapter:", error);
-      res.status(500).json({ error: 'Error creating chapter', cause: error });
-    }
+    
+    const upload = imageUploader();
+    upload.single("Image")(req, res, async (err) => {
+      if (err) {
+        console.error("Error uploading file:", err);
+        return res
+          .status(500)
+          .json({ error: "Error uploading file", cause: err });
+      }
+  
+      const { StoryID, Title, Content, ChapterNumber} = req.body;
+      const storyIDInt = parseInt(StoryID, 10);
+      const chapterNumberInt = parseInt(ChapterNumber, 10);
+      const ImagePath = req.file
+        ? `/images/${req.file.filename}`
+        : "/images/default-chapter-image.jpg";
+  
+      try {
+        const newChapter = await createChapter({
+          StoryID: storyIDInt, 
+          Title, 
+          Content, 
+          ChapterNumber: chapterNumberInt, 
+          ImagePath
+        });
+  
+        res.status(201).json(newChapter);
+      } catch (error) {
+        console.error("Error creating chapter:", error);
+        res.status(500).json({ error: "Error creating chapter", cause: error });
+      }
+    });
+
   };
   
   export const updateChapter = async (req, res) => {

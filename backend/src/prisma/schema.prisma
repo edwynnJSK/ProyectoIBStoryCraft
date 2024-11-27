@@ -9,10 +9,10 @@ datasource db {
 
 model Chapters {
   ChapterID     Int       @id @default(autoincrement())
-  StoryID       Int?      @db.Int
+  StoryID       Int      @db.Int
   Title         String    @db.NVarChar(100)
-  Content       String?   @db.NVarChar(Max)
-  ChapterNumber Int?      @db.Int
+  Content       String   @db.NVarChar(Max)
+  ChapterNumber Int      @db.Int
   CreatedAt     DateTime? @db.DateTime
   UpdatedAt     DateTime? @db.DateTime
   ImagePath     String?   @db.NVarChar(Max)

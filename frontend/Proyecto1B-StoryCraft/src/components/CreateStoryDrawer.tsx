@@ -71,15 +71,18 @@ const CreateStoryDrawer: React.FC<CreateStoryDrawerProps> = ({
     }
 
     try {
-      const chapterData: Chapter = {
-        StoryID: story.StoryID,
-        Title: chapterDetails.title,
-        Content: chapterDetails.content,
-        ChapterNumber: chapterNumber,
-        ImagePath: chapterImage ? chapterImage.name : null
-      };
 
-      await createChapter(chapterData);
+      const formData = new FormData();
+      formData.append('StoryID', story.StoryID.toString());
+      formData.append('Title', chapterDetails.title);
+      formData.append('Content', chapterDetails.content);
+      formData.append('ChapterNumber', chapterNumber.toString());
+
+      if (chapterImage) {
+        formData.append('Image', chapterImage); 
+      }
+
+      await createChapter(formData);
 
       return true;
     } catch (err) {

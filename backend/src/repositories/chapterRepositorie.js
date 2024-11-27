@@ -20,15 +20,15 @@ export const getAllChapters = async () => {
     }
   };
   
-  export const createChapter = async (storyID, title, content, chapterNumber, imagePath) => {
+  export const createChapter = async (data) => {
     try {
       return await prisma.chapters.create({
         data: {
-          StoryID: storyID,
-          Title: title,
-          Content: content,
-          ChapterNumber: chapterNumber,
-          ImagePath: imagePath || 'default-chapter-image.jpg', 
+          StoryID: data.StoryID,
+          Title: data.Title,
+          Content: data.Content,
+          ChapterNumber: data.ChapterNumber,
+          ImagePath: data.ImagePath, 
         },
       });
     } catch (error) {

@@ -65,13 +65,10 @@ export const createStory = async (storyData: FormData): Promise<Story> => {
   return newStory;
 };
 
-export const createChapter = async (chapterData: Partial<Chapter>): Promise<Chapter> => {
+export const createChapter = async (chapterData: FormData): Promise<Chapter> => {
   const response = await fetch('http://localhost:3001/api/chapters', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(chapterData),
+    body: chapterData,
   });
 
   if (!response.ok) {
