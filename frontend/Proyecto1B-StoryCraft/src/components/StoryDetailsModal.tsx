@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Story, Chapter } from '../api/storiesAPI';
 import { URL_IMAGE_STORY } from '../interfaces/stories';
 import ChaptersList from './ChaptersList';
-import { getChaptersByStoryId } from '../api/storiesAPI'; // Ensure this import exists
+import { getChaptersByStoryId } from '../api/storiesAPI';
+import './StoryDetailsModal.css';
 
 interface StoryDetailsModalProps {
     story: Story;
@@ -49,7 +50,6 @@ const StoryDetailsModal: React.FC<StoryDetailsModalProps> = ({
                             className="close"
                             onClick={onClose}
                         >
-                            &times;
                         </button>
                     </div>
                     <div className="modal-body">
