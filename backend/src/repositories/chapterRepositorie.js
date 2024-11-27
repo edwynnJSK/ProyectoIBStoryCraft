@@ -65,3 +65,14 @@ export const getAllChapters = async () => {
       throw new Error('Error deleting chapter');
     }
   };
+
+  export const getChaptersByStoryIdInRepository = async (storyID) => {
+    try {
+      return await prisma.chapters.findMany({
+        where: { StoryID: parseInt(storyID, 10) }
+      });
+    } catch (error) {
+      console.error("Error fetching chapters by story ID:", error);
+      throw new Error('Error fetching chapters by story ID');
+    }
+  };

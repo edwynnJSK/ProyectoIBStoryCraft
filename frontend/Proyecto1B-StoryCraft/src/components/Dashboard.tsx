@@ -5,6 +5,7 @@ import { getStories, getStoryById, Story, Chapter, getChaptersByStoryId } from '
 import Chat from "./Chat";
 import CreateStory from './CreateStory';
 import CreateStoryDrawer from './CreateStoryDrawer';
+import StoryDetailsModal from './StoryDetailsModal'; // New import
 import { URL_IMAGE_STORY } from '../interfaces/stories';
 import ResetPassword from './ResetPassword';
 import "../styles/Dashboard.css"
@@ -97,7 +98,7 @@ const Dashboard: React.FC = () => {
     const handleLogout = () => {
         logout();
         navigate("/login");
-      };
+    };
 
     const closeStoryModal = () => {
         setSelectedStory(null);
@@ -115,7 +116,7 @@ const Dashboard: React.FC = () => {
     if (error) {
         return <div>Error: {error}</div>;
     }
-
+    
     return (
       <div>
         <CreateStory 
@@ -190,69 +191,13 @@ const Dashboard: React.FC = () => {
 
                 {/* Story Details Modal */}
                 {selectedStory && (
-                    <div className="modal-overlay" >
-                        <div className="modal-content-custom modal-lg" >
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title">{selectedStory.Title}</h5>
-                                    <button 
-                                        type="button" 
-                                        className="close" 
-                                        onClick={closeStoryModal}
-                                    >
-                                        &times;
-                                    </button>
-                                </div>
-                                <div className="modal-body">
-                                    <div className="row">
-                                        <div className="col-md-4">
-                                            <img 
-                                                src={`${URL_IMAGE_STORY}${selectedStory.ImagePath}`} 
-                                                alt={selectedStory.Title} 
-                                                className="img-fluid" 
-                                            />
-                                        </div>
-                                        <div className="col-md-8">
-                                            <p>{selectedStory.Description || 'No description available'}</p>
-                                            <div>
-                                                <h6>Chapters</h6>
-                                                {storyChapters.length === 0 ? (
-                                                    <p>No chapters yet</p>
-                                                ) : (
-                                                    storyChapters.map(chapter => (
-                                                        <button 
-                                                            key={chapter.ChapterID} 
-                                                            className="btn btn-outline-primary m-1"
-                                                            onClick={() => handleChapterClick(chapter)}
-                                                        >
-                                                            {chapter.Title}
-                                                        </button>
-                                                    ))
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="modal-footer">
-                                    <br />
-                                    <br />
-                                    <br />
-                                    <button 
-                                        className="btn btn-secondary" 
-                                        onClick={closeStoryModal}
-                                    >
-                                        Close
-                                    </button>
-                                    <button 
-                                        className="btn btn-primary" 
-                                        onClick={handleAddNewChapter}
-                                    >
-                                        Agregar nuevo capítulo
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <StoryDetailsModal
+                        story={selectedStory}
+                        chapters={storyChapters}
+                        onClose={closeStoryModal}
+                        onAddChapter={handleAddNewChapter}
+                        onChapterClick={handleChapterClick}
+                    />
                 )}
 
                 {/* Chapter Content Modal */}
