@@ -1,4 +1,5 @@
 import { getAllStories,createStory,getStoryByID,updateStoryByID,deleteStoryByID } from "../repositories/storieRepositorie.js";
+import { imageUploader } from "../services/ImageUploader.js";
 
 export const getStories = async (req, res) => {
     try {
@@ -11,21 +12,37 @@ export const getStories = async (req, res) => {
   };
 
   export const addStory = async (req, res) => {
-    const { Title, Description, AuthorID, Genre, MaturityRating, ImagePath } = req.body;
-    try {
-      const newStory = await createStory({
-        Title,
-        Description,
-        AuthorID,
-        Genre,
-        MaturityRating,
-        ImagePath,
-      });
-      res.status(201).json(newStory);
-    } catch (error) {
-      console.error("Error creating story:", error);
-      res.status(500).json({ error: "Error creating story", cause: error });
-    }
+    const upload = imageUploader();
+    upload.single("Image")(req, res, async (err) => {
+      if (err) {
+        console.error("Error uploading file:", err);
+        return res
+          .status(500)
+          .json({ error: "Error uploading file", cause: err });
+      }
+  
+      const { Title, Description, AuthorID, Genre, MaturityRating } = req.body;
+      const authorIDInt = parseInt(AuthorID, 10);
+      const ImagePath = req.file
+        ? `/images/${req.file.filename}`
+        : "/images/default-story-image.jpg";
+  
+      try {
+        const newStory = await createStory({
+          Title,
+          Description,
+          AuthorID: authorIDInt,
+          Genre,
+          MaturityRating,
+          ImagePath,
+        });
+  
+        res.status(201).json(newStory);
+      } catch (error) {
+        console.error("Error creating story:", error);
+        res.status(500).json({ error: "Error creating story", cause: error });
+      }
+    });
   };
 
         

@@ -55,19 +55,18 @@ const CreateStory: React.FC<CreateStoryProps> = ({
     }
 
     try {
-      // Prepare story data
-      const storyData = {
-        Title: storyDetails.title,
-        Description: storyDetails.description,
-        Genre: storyDetails.genre,
-        MaturityRating: storyDetails.maturityRating,
-        AuthorID: userID,
-        ImagePath: storyImage ? storyImage.name : 'default-story-image.jpg',
-        Status: 'draft'
-      };
+      const formData = new FormData();
+      formData.append('Title', storyDetails.title);
+      formData.append('Description', storyDetails.description);
+      formData.append('Genre', storyDetails.genre);
+      formData.append('MaturityRating', storyDetails.maturityRating);
+      formData.append('AuthorID', userID.toString());
+      formData.append('Status', 'draft');
+      if (storyImage) {
+        formData.append('Image', storyImage); 
+      }
 
-      // Create story
-      const newStory = await createStory(storyData);
+    const newStory = await createStory(formData);
 
       // Call the callback to move to next step
       onStoryCreated(newStory);

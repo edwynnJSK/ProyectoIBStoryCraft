@@ -51,13 +51,10 @@ export const getStoryById = async (storyID: number): Promise<Story> => {
   return story;
 };
 
-export const createStory = async (storyData: Partial<Story>): Promise<Story> => {
+export const createStory = async (storyData: FormData): Promise<Story> => {
   const response = await fetch('http://localhost:3001/api/stories', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(storyData),
+    body: storyData,
   });
 
   if (!response.ok) {

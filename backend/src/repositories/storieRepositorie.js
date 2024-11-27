@@ -19,7 +19,7 @@ export const getAllStories = async () => {
           Status: data.Status || 'draft',
           Genre: data.Genre || null,
           MaturityRating: data.MaturityRating || null,
-          ImagePath: data.ImagePath || 'default-story-image.jpg',
+          ImagePath: data.ImagePath ,
         },
       });
     } catch (error) {

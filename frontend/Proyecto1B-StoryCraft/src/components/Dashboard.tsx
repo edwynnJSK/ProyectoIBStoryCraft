@@ -4,6 +4,7 @@ import { getStories, getStoryById, Story, Chapter, getChaptersByStoryId } from '
 import Chat from "./Chat";
 import CreateStory from './CreateStory';
 import CreateStoryDrawer from './CreateStoryDrawer';
+import { URL_IMAGE_STORY } from '../interfaces/stories';
 
 const Dashboard: React.FC = () => {
     const { username } = useAuth(); 
@@ -160,7 +161,7 @@ const Dashboard: React.FC = () => {
                             onClick={() => handleStoryClick(story)}
                         >
                             <img 
-                                src={`/images/${story.ImagePath}`} 
+                                src={`${URL_IMAGE_STORY}${story.ImagePath}`} 
                                 className="card-img-top" 
                                 alt={story.Title} 
                             />
@@ -212,7 +213,7 @@ const Dashboard: React.FC = () => {
                                     <div className="row">
                                         <div className="col-md-4">
                                             <img 
-                                                src={`/images/${selectedStory.ImagePath}`} 
+                                                src={`${URL_IMAGE_STORY}${selectedStory.ImagePath}`} 
                                                 alt={selectedStory.Title} 
                                                 className="img-fluid" 
                                             />

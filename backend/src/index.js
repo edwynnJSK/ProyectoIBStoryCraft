@@ -3,6 +3,8 @@ import cors from 'cors';
 import { config} from 'dotenv';
 import userRoutes from './routes/userRoutes.js'; 
 import { setupWebSocket } from './websocket.js';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 config();
 
@@ -17,6 +19,13 @@ app.use('/api', userRoutes);
 app.get('/', (req, res) => {
   res.send('Backend API is working!');
 });
+
+//Configuracion de directorio imagenes
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const imagesPath = path.join(__dirname, 'images');
+app.use('/images', express.static(imagesPath));
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
