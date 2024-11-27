@@ -43,6 +43,18 @@ const Dashboard: React.FC = () => {
 
     const handleStoryCreated = (story: Story) => {
         setSelectedCreatedStory(story);
+
+        // Fetch stories again to update the dashboard without full page reload
+    const fetchStories = async () => {
+        try {
+            const fetchedStories = await getStories();
+            setStories(fetchedStories);
+        } catch (err) {
+            setError('Failed to fetch stories');
+        }
+    };
+
+    fetchStories();
     };
 
     const toggleDropdown = () => setIsOpen(!isOpen);
