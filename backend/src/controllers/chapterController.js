@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-import {getAllChapters, getChapterByID,createChapter, updateChapterByID,deleteChapterByID} from '../repositories/chapterRepositorie.js'
-import { imageUploader } from "../services/ImageUploader.js";
-=======
 import {getAllChapters, getChapterByID,createChapter, updateChapterByID,deleteChapterByID, getChaptersByStoryIdInRepository} from '../repositories/chapterRepositorie.js'
->>>>>>> refs/remotes/origin/main
+import { imageUploader } from "../services/ImageUploader.js";
 
 export const getChapters = async (req, res) => {
     try {
@@ -97,7 +93,7 @@ export const getChapters = async (req, res) => {
   export const getChaptersByStory = async (req, res) => {
     const { storyID } = req.params;
     try {
-      const chapters = await chapterRepository.getChaptersByStoryIdInRepository(storyID);
+      const chapters = await getChaptersByStoryIdInRepository(storyID);
       res.json(chapters);
     } catch (error) {
       console.error('Error fetching chapters:', error);
