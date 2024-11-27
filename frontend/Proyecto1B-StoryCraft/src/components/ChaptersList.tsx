@@ -1,5 +1,6 @@
 import React from 'react';
 import { Chapter } from '../api/storiesAPI';
+import { URL_IMAGE_STORY } from '../interfaces/stories';
 
 interface ChaptersListProps {
     chapters: Chapter[];
@@ -17,15 +18,24 @@ const ChaptersList: React.FC<ChaptersListProps> = ({
     return (
         <div>
             <h6>Chapters</h6>
-            <div className="chapters-container">
+            <div className="row">
                 {chapters.map(chapter => (
-                    <button 
-                        key={chapter.ChapterID} 
-                        className="btn btn-outline-primary m-1"
-                        onClick={() => onChapterClick(chapter)}
-                    >
-                        {chapter.Title}
-                    </button>
+                    <div key={chapter.ChapterID} className="col-md-4 mb-3">
+                        <button 
+                            className="btn btn-outline-primary w-100"
+                            onClick={() => onChapterClick(chapter)}
+                        >
+                            <div className="d-flex flex-column align-items-center">
+                                <img 
+                                    src={`${URL_IMAGE_STORY}${chapter.ImagePath}`} 
+                                    alt={chapter.Title} 
+                                    className="img-fluid mb-2"
+                                    style={{ maxHeight: '150px', objectFit: 'cover' }}
+                                />
+                                {chapter.Title}
+                            </div>
+                        </button>
+                    </div>
                 ))}
             </div>
         </div>
