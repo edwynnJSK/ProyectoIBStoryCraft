@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { getStories, getStoryById, Story, Chapter, getChaptersByStoryId } from '../api/storiesAPI';
 import Chat from "./Chat";
 import CreateStory from './CreateStory';
 import CreateStoryDrawer from './CreateStoryDrawer';
 import { URL_IMAGE_STORY } from '../interfaces/stories';
+import ResetPassword from './ResetPassword';
+import "../styles/Dashboard.css"
 
 const Dashboard: React.FC = () => {
     const { username } = useAuth(); 
-
+    const { logout } = useAuth();
+    const navigate = useNavigate();
     const [stories, setStories] = useState<Story[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -16,6 +20,7 @@ const Dashboard: React.FC = () => {
     const [selectedStory, setSelectedStory] = useState<Story | null>(null);
     const [selectedCreatedStory, setSelectedCreatedStory] = useState<Story | null>(null);
     const [isCreateStoryModalVisible, setIsCreateStoryModalVisible] = useState(false);
+    const [isResetPasswordModalVisible, setIsResetPasswordModalVisible] = useState(false);
     const [storyChapters, setStoryChapters] = useState<Chapter[]>([]);
     const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null);
 
@@ -89,6 +94,11 @@ const Dashboard: React.FC = () => {
         }
     };
 
+    const handleLogout = () => {
+        logout();
+        navigate("/login");
+      };
+
     const closeStoryModal = () => {
         setSelectedStory(null);
         setSelectedChapter(null);
@@ -123,7 +133,12 @@ const Dashboard: React.FC = () => {
           />
         )}
 
-        <h1>Bienvenido al Dashboard</h1>
+        <ResetPassword
+          show={isResetPasswordModalVisible}
+          onHide={() => setIsResetPasswordModalVisible(false)}
+        />
+
+        <h1>Bienvenido a StoryCraft</h1>
         {username ? (
           <>
             <p>Hola, {username}!</p>
@@ -143,8 +158,8 @@ const Dashboard: React.FC = () => {
                         </button>
                         {isOpen && (
                             <div className="dropdown-menu show">
-                                <a className="dropdown-item" href="#">Cerrar sesión</a>
-                                <a className="dropdown-item" href="#">Cambiar contraseña</a>
+                                <a className="dropdown-item" onClick={handleLogout}>Cerrar sesión</a>
+                                <a className="dropdown-item" onClick={() => setIsResetPasswordModalVisible(true)}>Cambiar contraseña</a>
                             </div>
                         )}
                     </div>
@@ -175,29 +190,8 @@ const Dashboard: React.FC = () => {
 
                 {/* Story Details Modal */}
                 {selectedStory && (
-                    <div 
-                        className="modal" 
-                        style={{ 
-                            display: 'block', 
-                            backgroundColor: 'rgba(0,0,0,0.5)',
-                            position: 'fixed',
-                            top: 0,
-                            left: 0,
-                            width: '100%',
-                            height: '100%',
-                            zIndex: 1000
-                        }}
-                    >
-                        <div 
-                            className="modal-dialog modal-lg" 
-                            style={{ 
-                                maxWidth: '800px',
-                                margin: '50px auto',
-                                backgroundColor: 'white',
-                                borderRadius: '10px',
-                                padding: '20px'
-                            }}
-                        >
+                    <div className="modal-overlay" >
+                        <div className="modal-content-custom modal-lg" >
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h5 className="modal-title">{selectedStory.Title}</h5>
@@ -240,17 +234,20 @@ const Dashboard: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button 
-                                        className="btn btn-primary" 
-                                        onClick={handleAddNewChapter}
-                                    >
-                                        Add New Chapter
-                                    </button>
+                                    <br />
+                                    <br />
+                                    <br />
                                     <button 
                                         className="btn btn-secondary" 
                                         onClick={closeStoryModal}
                                     >
                                         Close
+                                    </button>
+                                    <button 
+                                        className="btn btn-primary" 
+                                        onClick={handleAddNewChapter}
+                                    >
+                                        Agregar nuevo capítulo
                                     </button>
                                 </div>
                             </div>
@@ -260,29 +257,8 @@ const Dashboard: React.FC = () => {
 
                 {/* Chapter Content Modal */}
                 {selectedChapter && (
-                    <div 
-                        className="modal" 
-                        style={{ 
-                            display: 'block', 
-                            backgroundColor: 'rgba(0,0,0,0.5)',
-                            position: 'fixed',
-                            top: 0,
-                            left: 0,
-                            width: '100%',
-                            height: '100%',
-                            zIndex: 1000
-                        }}
-                    >
-                        <div 
-                            className="modal-dialog modal-lg"
-                            style={{ 
-                                maxWidth: '800px',
-                                margin: '50px auto',
-                                backgroundColor: 'white',
-                                borderRadius: '10px',
-                                padding: '20px'
-                            }}
-                        >
+                    <div className="modal-overlay" >
+                        <div  className="modal-content-custom modal-lg" >
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h5 className="modal-title">{selectedChapter.Title}</h5>

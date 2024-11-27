@@ -1,0 +1,71 @@
+/* Estilo principal */
+.dashboard {
+    padding: 20px;
+  }
+  
+  /* Botones */
+  .dashboard .btn-create-story {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+  
+  .dashboard .dropdown .dropdown-menu {
+    position: absolute;
+    z-index: 1050;
+  }
+  
+  /* Tarjetas */
+  .dashboard .card {
+    width: 18rem;
+    margin: 15px;
+    cursor: pointer;
+  }
+  
+  .dashboard .card img {
+    max-height: 180px;
+    object-fit: cover;
+  }
+  
+  .dashboard .card-title {
+    font-size: 1.25rem;
+  }
+  
+  /* Modales */
+  .modal-overlay {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+  }
+  
+  .modal-content-custom {
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  
+  .modal-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  .modal-footer .btn-primary {
+    margin-right: auto;
+  }
+  
+  /* Historias */
+  .dashboard .story-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
