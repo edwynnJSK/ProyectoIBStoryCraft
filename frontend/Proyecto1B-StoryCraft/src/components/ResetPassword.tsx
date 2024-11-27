@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Form, Alert } from "react-bootstrap";
-import { resetPassword } from "../api/resetAPI";
+import { resetPassword } from "../api/usersAPI";
 import { useAuth } from "../context/AuthContext";
 
 interface ResetPasswordProps {
@@ -13,11 +13,14 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ show, onHide }) => {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
+
 
   useEffect(() => {
     // Clear error and success messages after 3 seconds
     const timer = setTimeout(() => {
       setError("");
+      setSuccess("");
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -25,6 +28,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ show, onHide }) => {
 
   const handleResetPassword = async () => {
     setError("");
+    setSuccess("");
 
     if (password !== confirmPassword) {
       setError("Las contraseñas no coinciden");
@@ -38,10 +42,20 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ show, onHide }) => {
 
     // Reset password
     try {
-      await resetPassword(userID);
-      handleClean();
+      if (!userID) {
+        setError("User ID not found");
+        return;
+      }
+
+      const message = await resetPassword(userID, { Password: password });
+      setSuccess(message);
+      // Clear form and close modal after 2 seconds
+      setTimeout(() => {
+        handleClean();
+      }, 2000);
     } catch (err) {
-      setError(typeof err === "string" ? err : "Error al actualizar la contraseña");
+      console.error('Reset Password Error:', err);
+      setError(err instanceof Error ? err.message : "Error al actualizar la contraseña");
     }
   };
 
@@ -49,6 +63,8 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ show, onHide }) => {
     // Clear form
     setPassword("");
     setConfirmPassword("");
+    setError("");
+    setSuccess("");
     onHide(); // Close the modal after successful reset
   };
 
@@ -59,6 +75,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ show, onHide }) => {
       </Modal.Header>
       <Modal.Body>
         {error && <Alert variant="danger">{error}</Alert>}
+        {success && <Alert variant="success">{success}</Alert>}
         <Form>
           <Form.Group controlId="formBasicPassword" className="mb-3">
             <Form.Label>Nueva Contraseña</Form.Label>
@@ -86,8 +103,8 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ show, onHide }) => {
           Cancelar
         </Button>
         <Button 
-        variant="primary" 
-        onClick={handleResetPassword}
+          variant="primary" 
+          onClick={handleResetPassword}
         >
           Aceptar
         </Button>

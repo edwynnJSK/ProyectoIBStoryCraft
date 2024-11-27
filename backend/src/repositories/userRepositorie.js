@@ -38,10 +38,16 @@ export const updateUserByID = async (userID, data) => {
     const filteredData = {};
     for (const key in data) {
       if (data[key] !== undefined) {
-        filteredData[key] = data[key];
+        // If updating password, hash it
+        if (key === 'Password') {
+          filteredData[key] = await hashPassword(data[key]);
+        } else {
+          filteredData[key] = data[key];
+        }
       }
     }
-
+    
+    const hashedPassword = await hashPassword(password);
     return prisma.users.update({
       where: { UserID: parseInt(userID, 10) },
       data: filteredData,

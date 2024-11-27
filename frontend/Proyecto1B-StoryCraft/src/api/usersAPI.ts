@@ -43,4 +43,24 @@ export interface LoginRequest {
     const responseData:CreateUserResponse = await response.json();
     
     return responseData.message;
+  };
+
+  export interface ResetPasswordRequest {
+    Password: string;
   }
+
+  export const resetPassword = async (userID: number, data: ResetPasswordRequest): Promise<string> => {
+    const response = await fetch(`http://localhost:3001/api/users/${userID}`, {
+      method: 'PATCH',
+      headers: { 
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+  
+    if (!response.ok) {
+      throw new Error('No se pudo actualizar la contraseña');
+    }
+  
+    return 'Contraseña actualizada exitosamente';
+  };

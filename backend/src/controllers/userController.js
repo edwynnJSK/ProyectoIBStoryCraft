@@ -32,21 +32,12 @@ export const getUsers = async (req, res) => {
     try {
       const { userID } = req.params;
       const { Username, Email, Password } = req.body;
-  
-      // Validar datos requeridos
-
-      /*
-      if (!Username && !Email && !Password) {
-        return res.status(400).json({ error: 'No data provided to update' });
-      }*/
-  
+      
       const updatedUser = await updateUserByID(userID, { Username, Email, Password });
-  
       if (!updatedUser) {
         return res.status(404).json({ error: 'User not found' });
       }
-  
-      res.status(200).json(updatedUser);
+      res.status(200).json({ message: 'User updated successfully' });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Error updating user', cause: error });
