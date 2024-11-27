@@ -3,7 +3,7 @@ import { Story, Chapter } from '../api/storiesAPI';
 import { URL_IMAGE_STORY } from '../interfaces/stories';
 import ChaptersList from './ChaptersList';
 import { getChaptersByStoryId } from '../api/storiesAPI';
-import './StoryDetailsModal.css';
+import "../styles/StoryDetailsModal.css";
 
 interface StoryDetailsModalProps {
     story: Story;
