@@ -35,25 +35,23 @@ export const createUser = async (username, email, password) => {
 
 export const updateUserByID = async (userID, data) => {
   try {
+    if(data){
+      const hashedPassword = await hashPassword(data.Password);
+      data.Password = hashedPassword
+    }
     const filteredData = {};
     for (const key in data) {
       if (data[key] !== undefined) {
-        // If updating password, hash it
-        if (key === 'Password') {
-          filteredData[key] = await hashPassword(data[key]);
-        } else {
           filteredData[key] = data[key];
         }
       }
-    }
     
-    const hashedPassword = await hashPassword(password);
     return prisma.users.update({
       where: { UserID: parseInt(userID, 10) },
       data: filteredData,
     });
   } catch (error) {
-    console.error(error);
+    console.error(error, 'llego aca xd');
     throw new Error('Error updating user');
   }
 };

@@ -49,13 +49,13 @@ export interface LoginRequest {
     Password: string;
   }
 
-  export const resetPassword = async (userID: number, data: ResetPasswordRequest): Promise<string> => {
+  export const resetPassword = async (userID: number, password: ResetPasswordRequest): Promise<string> => {
     const response = await fetch(`http://localhost:3001/api/users/${userID}`, {
       method: 'PATCH',
       headers: { 
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(password),
     });
   
     if (!response.ok) {

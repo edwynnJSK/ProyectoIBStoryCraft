@@ -32,7 +32,7 @@ export const getUsers = async (req, res) => {
     try {
       const { userID } = req.params;
       const { Username, Email, Password } = req.body;
-      
+      console.log('Esto llega de password', Password)
       const updatedUser = await updateUserByID(userID, { Username, Email, Password });
       if (!updatedUser) {
         return res.status(404).json({ error: 'User not found' });
