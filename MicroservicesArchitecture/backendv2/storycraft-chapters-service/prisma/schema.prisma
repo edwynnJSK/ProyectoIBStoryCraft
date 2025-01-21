@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Chapters {
+  ChapterID     Int       @id @default(autoincrement())
+  StoryID       Int       @db.Int
+  Title         String    @db.NVarChar(100)
+  Content       String?   @db.NVarChar(Max)
+  ChapterNumber Int       @db.Int
+  CreatedAt     DateTime @default(now()) @db.DateTime
+  UpdatedAt     DateTime @default(now()) @db.DateTime
+  ImagePath     String?   @default("default-chapter-image.jpg") @db.NVarChar(Max)
+}
+
+

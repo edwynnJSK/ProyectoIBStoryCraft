@@ -1,0 +1,1 @@
+export const URL_IMAGE_STORY = 'http://localhost:3000'

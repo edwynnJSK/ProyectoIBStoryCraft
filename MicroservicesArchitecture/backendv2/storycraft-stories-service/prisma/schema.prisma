@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+
+model Stories {
+  StoryID        Int            @id @default(autoincrement())
+  Title          String         @db.NVarChar(100)
+  Description    String?        @db.NVarChar(Max)
+  AuthorID       Int
+  Status         String        @default("draft") @db.NVarChar(20)
+  CreatedAt      DateTime      @default(now()) @db.DateTime
+  UpdatedAt      DateTime      @default(now()) @db.DateTime
+  Genre          String        @db.NVarChar(50)
+  MaturityRating String        @db.NVarChar(20)
+  ImagePath      String        @default("default-story-image.jpg") @db.NVarChar(255)
+}
+
