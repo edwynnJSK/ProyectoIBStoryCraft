@@ -3,7 +3,7 @@ import { createContext, useState, useContext } from 'react';
 interface AuthContextType {
   username: string | null;
   userID: number | null;
-  login: (username: string, userID: number) => void;
+  login: (username: string, userID: number, tokenAuth: string) => void;
   logout: () => void;
 }
 
@@ -13,11 +13,12 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [username, setUsername] = useState<string | null>(null);
   const [userID, setUserID] = useState<number | null>(null);
 
-  const login = (username: string, userID: number) => {
+  const login = (username: string, userID: number, tokenAuth: string) => {
     setUsername(username);
     setUserID(userID);
     localStorage.setItem('username', username);
     localStorage.setItem('userID', userID.toString());
+    localStorage.setItem('token', tokenAuth);
   };
 
   const logout = () => {

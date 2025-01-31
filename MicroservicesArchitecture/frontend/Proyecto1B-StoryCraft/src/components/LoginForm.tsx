@@ -19,7 +19,7 @@ const LoginForm: React.FC = () => {
 
       // Verificamos que los datos existan
       if (response.UserId && response.Username) {
-        login(response.Username, response.UserId);
+        login(response.Username, response.UserId, response.TokenAuth);
         navigate("/dashboard");
       } else {
         setError("El email o contraseña son incorrectos");

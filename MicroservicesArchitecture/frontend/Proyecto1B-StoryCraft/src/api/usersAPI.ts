@@ -8,6 +8,7 @@ export interface LoginRequest {
   export interface LoginResponse {
     UserId: number;
     Username: string;
+    TokenAuth: string;
   }
   export interface CreateUserResponse{
     message: string;
@@ -30,7 +31,7 @@ export interface LoginRequest {
   };
 
   export const createUser = async(data:SignupForm)=>{
-    const response = await fetch("http://localhost:3001/api/users", {
+    const response = await fetch("http://localhost:3000/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
