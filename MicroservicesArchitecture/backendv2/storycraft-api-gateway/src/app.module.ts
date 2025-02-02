@@ -5,6 +5,8 @@ import { ChaptersModule } from './chapters/chapters.module';
 import { ChatModule } from './chat/chat.module';
 import { ConfigModule } from '@nestjs/config';
 import { ImageUploader } from './image-manager.service';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from './common/log-interceptor.service';
 
 @Module({
   imports: [
@@ -15,6 +17,12 @@ import { ImageUploader } from './image-manager.service';
     ChatModule,
   ],
   controllers: [],
-  providers: [ImageUploader],
+  providers: [
+    ImageUploader,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
 })
 export class AppModule {}

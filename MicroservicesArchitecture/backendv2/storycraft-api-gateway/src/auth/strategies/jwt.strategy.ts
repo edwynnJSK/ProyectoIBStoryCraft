@@ -12,12 +12,12 @@ export class JwtEstrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    const { id, exp } = payload;
+    const { UserId, exp } = payload;
     const currentTimestamp = Math.floor(Date.now() / 1000);
 
     if (exp < currentTimestamp) {
       throw new UnauthorizedException('Token has expired');
     }
-    return { id };
+    return { UserId };
   }
 }

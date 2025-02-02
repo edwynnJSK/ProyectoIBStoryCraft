@@ -64,7 +64,6 @@ export class AuthService {
       );
       return response.data;
     } catch (error) {
-      console.log(error.data.message, "aaaa")
       throw new NotFoundException(
         'Error updating user',
         error.response.data.statusCode,
