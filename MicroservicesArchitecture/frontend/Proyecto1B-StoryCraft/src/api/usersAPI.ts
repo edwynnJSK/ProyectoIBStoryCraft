@@ -6,7 +6,6 @@ export interface LoginRequest {
   }
   
   export interface LoginResponse {
-    UserId: number;
     Username: string;
     TokenAuth: string;
   }
@@ -37,6 +36,7 @@ export interface LoginRequest {
       body: JSON.stringify(data),
     });
 
+    console.log(response)
     if (!response.ok) {
       throw new Error('Can not create a new user');
     }
@@ -51,14 +51,15 @@ export interface LoginRequest {
   }
 
   export const resetPassword = async (userID: number, password: ResetPasswordRequest): Promise<string> => {
-    const response = await fetch(`http://localhost:3001/api/users/${userID}`, {
+    const token = localStorage?.getItem('token');
+    const response = await fetch(`http://localhost:3000/auth/update/${userID}`, {
       method: 'PATCH',
       headers: { 
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify(password),
     });
-  
     if (!response.ok) {
       throw new Error('No se pudo actualizar la contraseña');
     }

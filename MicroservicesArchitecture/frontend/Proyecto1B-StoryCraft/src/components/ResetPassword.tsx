@@ -54,7 +54,6 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ show, onHide }) => {
         handleClean();
       }, 2000);
     } catch (err) {
-      console.error('Reset Password Error:', err);
       setError(err instanceof Error ? err.message : "Error al actualizar la contraseña");
     }
   };

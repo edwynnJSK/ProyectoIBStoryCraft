@@ -72,10 +72,9 @@ export class AuthService {
         throw new BadRequestException('Credenciales inválidas');
       }
 
-      const payload = { UserId: user.UserID, Username: user.Username };
+      const payload = { UserId: user.UserID};
       const token = this.jwtService.sign(payload);
       const data = {
-        UserId: user.UserID,
         Username: user.Username,
         TokenAuth: token,
       };

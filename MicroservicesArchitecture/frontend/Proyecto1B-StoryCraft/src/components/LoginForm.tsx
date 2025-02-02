@@ -16,10 +16,9 @@ const LoginForm: React.FC = () => {
     e.preventDefault();
     try {
       const response = await loginUser({ Email: email, Password: password });
-
       // Verificamos que los datos existan
-      if (response.UserId && response.Username) {
-        login(response.Username, response.UserId, response.TokenAuth);
+      if (response.TokenAuth && response.Username) {
+        login(response.Username,response.TokenAuth);
         navigate("/dashboard");
       } else {
         setError("El email o contraseña son incorrectos");

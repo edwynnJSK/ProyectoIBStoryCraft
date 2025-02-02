@@ -9,10 +9,13 @@ import {
   Patch,
   Post,
   UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ChaptersService } from './chapters.service';
 import { CreateChapterDto } from './dto/create-chapter.dto';
 import { UpdateChapterDto } from './dto/update-chapter.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ImageUploader } from 'src/image-manager.service';
 
 @Controller('chapters')
 export class ChaptersController {
@@ -37,6 +40,9 @@ export class ChaptersController {
   }
 
   @Post()
+  @UseInterceptors(
+    FileInterceptor('Image', { storage: ImageUploader.getImageUploader() }),
+  )
   async addChapter(
     @Body() createChapterDto: CreateChapterDto,
     @UploadedFile() file: Express.Multer.File,

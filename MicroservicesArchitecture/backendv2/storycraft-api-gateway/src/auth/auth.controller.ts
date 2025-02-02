@@ -10,6 +10,7 @@ import {
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { AuthUserDto } from './dto/auth-user.dto';
+import { Auth } from './decorators';
 
 @Controller('/auth')
 export class AuthController {
@@ -43,6 +44,7 @@ export class AuthController {
   }
 
   @Patch('/update/:userId')
+  @Auth()
   async updateUser(
     @Body() userInfo: RegisterUserDto,
     @Param('userId') userId: string,

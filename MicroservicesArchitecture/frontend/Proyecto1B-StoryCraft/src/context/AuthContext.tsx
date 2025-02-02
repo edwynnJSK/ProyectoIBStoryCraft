@@ -3,7 +3,7 @@ import { createContext, useState, useContext } from 'react';
 interface AuthContextType {
   username: string | null;
   userID: number | null;
-  login: (username: string, userID: number, tokenAuth: string) => void;
+  login: (username: string, tokenAuth: string) => void;
   logout: () => void;
 }
 
@@ -13,19 +13,20 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [username, setUsername] = useState<string | null>(null);
   const [userID, setUserID] = useState<number | null>(null);
 
-  const login = (username: string, userID: number, tokenAuth: string) => {
-    setUsername(username);
-    setUserID(userID);
+  const login = (username: string, tokenAuth: string) => {
     localStorage.setItem('username', username);
-    localStorage.setItem('userID', userID.toString());
     localStorage.setItem('token', tokenAuth);
+    const userId =  getUserIdFromToken();
+    setUserID(userId);
+    setUsername(username);
+    
   };
 
   const logout = () => {
     setUsername(null);
     setUserID(null);
     localStorage.removeItem('username');
-    localStorage.removeItem('userID');
+    localStorage.removeItem('token');
   };
 
   return (
@@ -35,6 +36,20 @@ export const AuthProvider: React.FC = ({ children }) => {
   );
 };
 
+const getUserIdFromToken = (): number | null => {  
+  const token = localStorage.getItem('token');
+
+  if (!token) return null;
+
+  try {
+    const base64Payload = token.split('.')[1];
+    const decodedPayload = JSON.parse(atob(base64Payload));
+    return decodedPayload.UserId;
+  } catch (error) {
+    return null;
+  }
+};
+
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -42,3 +57,5 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
+
+

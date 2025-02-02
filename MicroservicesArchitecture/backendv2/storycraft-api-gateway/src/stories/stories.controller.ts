@@ -51,7 +51,6 @@ export class StoriesController {
     @Body() storyDto: CreateStoryDto,
     @UploadedFile() file: Express.Multer.File
   ) {
-    console.log(file)
     const ImagePath = file
       ? `/images/${file.filename}`
       : '/images/default-story-image.jpg';
