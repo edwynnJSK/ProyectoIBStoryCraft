@@ -114,3 +114,21 @@ export const getChaptersByStoryId = async (storyID: number): Promise<Chapter[]> 
   const chapters: Chapter[] = await response.json();
   return chapters;
 };
+
+//Funciona la eliminación de historias
+export const deleteStory = async (storyId: number): Promise<void> => {
+  const token = localStorage?.getItem('token');
+  const response = await fetch(`http://localhost:3000/stories/${storyId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to delete story');
+  }
+};
+
+

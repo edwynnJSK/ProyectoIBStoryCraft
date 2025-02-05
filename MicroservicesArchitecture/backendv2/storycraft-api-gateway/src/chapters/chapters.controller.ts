@@ -48,6 +48,7 @@ export class ChaptersController {
     }
   }
 
+
   @Post()
   @UseInterceptors(
     FileInterceptor('Image', { storage: ImageUploader.getImageUploader() }),
@@ -104,3 +105,4 @@ export class ChaptersController {
     }
   }
 }
+

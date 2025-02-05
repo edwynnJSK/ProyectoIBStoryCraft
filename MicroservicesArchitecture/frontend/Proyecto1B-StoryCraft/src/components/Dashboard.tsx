@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { getStories, getStoryById, Story, Chapter, getChaptersByStoryId } from '../api/storiesAPI';
+import { getStories, getStoryById, Story, Chapter, getChaptersByStoryId, deleteStory } from '../api/storiesAPI';
 import Chat from "./Chat";
 import CreateStory from './CreateStory';
 import CreateStoryDrawer from './CreateStoryDrawer';
@@ -9,6 +9,7 @@ import StoryDetailsModal from './StoryDetailsModal'; // New import
 import { URL_IMAGE_STORY } from '../interfaces/stories';
 import ResetPassword from './ResetPassword';
 import "../styles/Dashboard.css"
+
 
 const Dashboard: React.FC = () => {
     const { username } = useAuth(); 
@@ -104,6 +105,20 @@ const Dashboard: React.FC = () => {
     const handleAddNewChapter = () => {
         if (selectedStory) {
             setSelectedCreatedStory(selectedStory);
+        }
+    };
+
+    //codigo agregado para eliminar historia
+    const handleDeleteStory = async (storyId: number) => {
+        try {
+            await deleteStory(storyId);
+            // Refresh stories after deletion
+            const fetchedStories = await getStories();
+            setStories(fetchedStories);
+            // Close the story modal
+            setSelectedStory(null);
+        } catch (error) {
+            console.error('Failed to delete story:', error);
         }
     };
 
@@ -209,6 +224,7 @@ const Dashboard: React.FC = () => {
                         onClose={closeStoryModal}
                         onAddChapter={handleAddNewChapter}
                         onChapterClick={handleChapterClick}
+                        onDeleteStory={handleDeleteStory} // Linea agrgada para eliminar historia
                     />
                 )}
 

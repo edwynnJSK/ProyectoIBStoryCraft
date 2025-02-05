@@ -11,13 +11,15 @@ interface StoryDetailsModalProps {
     onClose: () => void;
     onAddChapter: () => void;
     onChapterClick: (chapter: Chapter) => void;
+    onDeleteStory: (story: Story) => void;  // New prop for deletion
 }
 
 const StoryDetailsModal: React.FC<StoryDetailsModalProps> = ({
     story,
     onClose,
     onAddChapter,
-    onChapterClick
+    onChapterClick,
+    onDeleteStory   // New prop for deletion
 }) => {
     const [chapters, setChapters] = useState<Chapter[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -84,6 +86,12 @@ const StoryDetailsModal: React.FC<StoryDetailsModalProps> = ({
                             onClick={onClose}
                         >
                             Close
+                        </button>
+                        <button
+                            className="btn btn-danger" // Changed to btn-danger for delete action
+                            onClick={() => onDeleteStory(story.StoryID)}
+                        >
+                            Eliminar historia
                         </button>
                         <button
                             className="btn btn-primary"
