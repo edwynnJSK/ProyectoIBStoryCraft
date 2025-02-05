@@ -1,0 +1,17 @@
+services:
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auth-service
+    restart: always
+    networks:
+      - ms-bdd_default
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./.env
+
+networks:
+  ms-bdd_default:
+    external: true

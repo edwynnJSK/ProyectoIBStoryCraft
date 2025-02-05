@@ -1,0 +1,17 @@
+services:
+  stories-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stories-service
+    restart: always
+    networks:
+      - ms-bdd_default
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./.env
+
+networks:
+  ms-bdd_default:
+    external: true

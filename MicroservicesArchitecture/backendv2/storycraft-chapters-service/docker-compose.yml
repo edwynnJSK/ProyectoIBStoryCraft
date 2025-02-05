@@ -1,0 +1,17 @@
+services:
+  chapters-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chapters-service
+    restart: always
+    networks:
+      - ms-bdd_default
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./.env
+
+networks:
+  ms-bdd_default:
+    external: true

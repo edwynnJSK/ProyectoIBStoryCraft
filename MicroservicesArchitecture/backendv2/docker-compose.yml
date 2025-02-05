@@ -1,0 +1,60 @@
+services:
+  auth-service:
+    build:
+      context: ./storycraft-auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    restart: always
+    networks:
+      - ms-bdd_default
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./storycraft-auth-service/.env
+
+  chapters-service:
+    build:
+      context: ./storycraft-chapters-service
+      dockerfile: Dockerfile
+    container_name: chapters-service
+    restart: always
+    networks:
+      - ms-bdd_default
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./storycraft-chapters-service/.env
+
+  stories-service:
+    build:
+      context: ./storycraft-stories-service
+      dockerfile: Dockerfile
+    container_name: stories-service
+    restart: always
+    networks:
+      - ms-bdd_default
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./storycraft-stories-service/.env
+
+  api-gateway:
+    build:
+      context: ./storycraft-api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    restart: always
+    networks:
+      - ms-bdd_default
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./storycraft-api-gateway/.env
+    depends_on:
+      - auth-service
+      - stories-service
+      - chapters-service
+
+networks:
+  ms-bdd_default:
+    external: true

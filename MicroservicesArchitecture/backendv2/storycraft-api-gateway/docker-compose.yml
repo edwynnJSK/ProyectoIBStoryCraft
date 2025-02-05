@@ -1,0 +1,18 @@
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    restart: always
+    networks:
+      - ms-bdd_default
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./.env 
+
+networks:
+  ms-bdd_default:
+    external: true
