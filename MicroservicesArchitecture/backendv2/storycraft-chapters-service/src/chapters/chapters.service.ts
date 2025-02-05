@@ -5,6 +5,7 @@ import { UpdateChapterDto } from './dto/update-chapter.dto';
 
 @Injectable()
 export class ChaptersService {
+
   constructor(private prisma: PrismaService) {}
 
   async getAllChapters() {
@@ -19,6 +20,23 @@ export class ChaptersService {
     try {
       const chapter = await this.prisma.chapters.findUnique({
         where: { ChapterID: chapterID },
+      });
+      if (!chapter) {
+        throw new NotFoundException(`Chapter not found`);
+      }
+      return chapter;
+    } catch (error) {
+      throw new HttpException(error.message, error.status)
+    }
+  }
+
+  async getUniqueChapter(chapterId: number, storyId: number) {
+    try {
+      const chapter = await this.prisma.chapters.findFirst({
+        where: {
+          ChapterID: chapterId,
+          StoryID: storyId
+        },
       });
       if (!chapter) {
         throw new NotFoundException(`Chapter not found`);

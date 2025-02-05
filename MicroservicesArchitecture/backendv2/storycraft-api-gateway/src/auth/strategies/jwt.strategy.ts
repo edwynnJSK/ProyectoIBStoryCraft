@@ -18,6 +18,7 @@ export class JwtEstrategy extends PassportStrategy(Strategy) {
     if (exp < currentTimestamp) {
       throw new UnauthorizedException('Token has expired');
     }
+    
     return { UserId };
   }
 }

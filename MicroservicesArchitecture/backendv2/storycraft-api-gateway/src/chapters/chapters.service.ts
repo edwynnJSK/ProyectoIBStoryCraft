@@ -6,6 +6,7 @@ import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class ChaptersService {
+
   constructor(private httpService: HttpService) {}
 
   async getAllChapters() {
@@ -24,6 +25,22 @@ export class ChaptersService {
       const response = await lastValueFrom(
         this.httpService.get(
           `${process.env.CHAPTERS_ENDPOINT}/chapters/${chapterId}`,
+        ),
+      );
+      return response.data;
+    } catch (error) {
+      throw new HttpException(
+        error.response.data.message,
+        error.response.data.statusCode,
+      );
+    }
+  }
+
+  async getUniqueChapter(chapterId: string, storyId: string) {
+    try {
+      const response = await lastValueFrom(
+        this.httpService.get(
+          `${process.env.CHAPTERS_ENDPOINT}/chapters/${chapterId}/story/${storyId}`,
         ),
       );
       return response.data;

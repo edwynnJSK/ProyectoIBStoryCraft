@@ -38,6 +38,15 @@ export class ChaptersController {
     }
   }
 
+  @Get('/:chapterId/story/:storyId')
+  async getUniqueChapter(@Param('chapterId') chapterId: string, @Param('storyId') storyId: string) {
+    try {
+      return await this.chaptersService.getUniqueChapter(parseInt(chapterId), parseInt(storyId));
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
   @Post()
   async addChapter(@Body() createChapterDto: CreateChapterDto) {
     try {

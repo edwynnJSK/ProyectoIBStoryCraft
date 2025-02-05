@@ -39,6 +39,15 @@ export class ChaptersController {
     }
   }
 
+  @Get('/:chapterId/story/:storyId')
+  async getUniqueChapter(@Param('chapterId') chapterID: string, @Param('storyId') storyId: string) {
+    try {
+      return await this.chaptersService.getUniqueChapter(chapterID, storyId);
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
   @Post()
   @UseInterceptors(
     FileInterceptor('Image', { storage: ImageUploader.getImageUploader() }),
