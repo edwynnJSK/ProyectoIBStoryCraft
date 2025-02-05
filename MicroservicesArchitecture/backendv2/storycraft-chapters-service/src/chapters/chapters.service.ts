@@ -5,7 +5,6 @@ import { UpdateChapterDto } from './dto/update-chapter.dto';
 
 @Injectable()
 export class ChaptersService {
-
   constructor(private prisma: PrismaService) {}
 
   async getAllChapters() {
@@ -26,7 +25,7 @@ export class ChaptersService {
       }
       return chapter;
     } catch (error) {
-      throw new HttpException(error.message, error.status)
+      throw new HttpException(error.message, error.status);
     }
   }
 
@@ -35,7 +34,7 @@ export class ChaptersService {
       const chapter = await this.prisma.chapters.findFirst({
         where: {
           ChapterID: chapterId,
-          StoryID: storyId
+          StoryID: storyId,
         },
       });
       if (!chapter) {
@@ -43,7 +42,7 @@ export class ChaptersService {
       }
       return chapter;
     } catch (error) {
-      throw new HttpException(error.message, error.status)
+      throw new HttpException(error.message, error.status);
     }
   }
 
@@ -69,11 +68,10 @@ export class ChaptersService {
         Object.entries(data).filter(([_, value]) => value !== undefined),
       );
 
-     await this.prisma.chapters.update({
+      await this.prisma.chapters.update({
         where: { ChapterID: chapterID },
         data: filteredData,
       });
-
     } catch (error) {
       if (error.code === 'P2025') {
         throw new NotFoundException(`Chapter with ID ${chapterID} not found`);
@@ -94,14 +92,41 @@ export class ChaptersService {
       throw new HttpException(error.message, error.status);
     }
   }
+
+  async deleteChaptersByStoryID(storyId: number) {
+    try {
+      const chapters = await this.prisma.chapters.findFirst({
+        where: { StoryID: storyId },
+      });
+
+      if (!chapters) {
+        return {
+          message: `No chapters not found for story, Skipping deletion.`,
+        };
+      }
+
+      await this.prisma.chapters.deleteMany({
+        where: {
+          StoryID: storyId,
+        },
+      });
+
+      return { message: `Chapters of story ${storyId} deleted successfully.` };
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
   async getChaptersByStoryId(storyID: number) {
     try {
       const chapters = await this.prisma.chapters.findMany({
         where: { StoryID: storyID },
       });
-      
+
       if (!chapters || chapters.length == 0) {
-        throw new NotFoundException(`Chapters for story ID ${storyID} not found`);
+        throw new NotFoundException(
+          `Chapters for story ID ${storyID} not found`,
+        );
       }
       return chapters;
     } catch (error) {
@@ -109,4 +134,3 @@ export class ChaptersService {
     }
   }
 }
-

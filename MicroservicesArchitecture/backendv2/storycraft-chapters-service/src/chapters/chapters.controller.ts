@@ -86,6 +86,16 @@ export class ChaptersController {
     }
   }
 
+  @Delete('/story/:storyId')
+  async deleteChaptersByStory(@Param('storyId') storyId: string) {
+  try {
+    await this.chaptersService.deleteChaptersByStoryID(parseInt(storyId));
+    return { message: `Capítulos de la historia eliminados exitosamente.` };
+  } catch (error) {
+    throw new HttpException(error.message, error.status);
+  }
+}
+
   @Get('/story/:storyId')
   async getChaptersByStory(@Param('storyId') storyID: string) {
     try {

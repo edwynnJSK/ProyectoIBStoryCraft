@@ -68,6 +68,16 @@ export class StoriesService {
 
   async deleteStoryByID(storyId: string) {
     try {
+      try {
+        await lastValueFrom(
+          this.httpService.delete(
+            `${process.env.CHAPTERS_ENDPOINT}/chapters/story/${storyId}`,
+          ),
+        );
+      } catch (error) {
+        console.warn(error.response.data.message);
+      }
+
       const response = await lastValueFrom(
         this.httpService.delete(
           `${process.env.STORIES_ENDPOINT}/stories/${storyId}`,
