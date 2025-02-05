@@ -38,7 +38,7 @@ export const getStories = async (): Promise<Story[]> => {
 };
 
 export const getStoryById = async (storyID: number): Promise<Story> => {
-  const response = await fetch(`http://localhost:3001/api/stories/${storyID}`, {
+  const response = await fetch(`http://localhost:3000/stories/${storyID}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export const createStory = async (storyData: FormData): Promise<Story> => {
 };
 
 export const createChapter = async (chapterData: FormData): Promise<Chapter> => {
-  const response = await fetch('http://localhost:3001/api/chapters', {
+  const response = await fetch('http://localhost:3000/chapters', {
     method: 'POST',
     body: chapterData,
   });
@@ -89,12 +89,18 @@ export const createStoryWithImage = async (storyData: Partial<Story>, imageName:
   };
 
   // Use existing createStory method
-  const newStory = await createStory(storyDataWithImage);
+  const formData = new FormData();
+  Object.entries(storyDataWithImage).forEach(([key, value]) => {
+    if (value !== undefined) {
+      formData.append(key, value.toString());
+    }
+  });
+  const newStory = await createStory(formData);
   return newStory;
 };
 
 export const getChaptersByStoryId = async (storyID: number): Promise<Chapter[]> => {
-  const response = await fetch(`http://localhost:3001/api/stories/${storyID}/chapters`, {
+  const response = await fetch(`http://localhost:3000/chapters/story/${storyID}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

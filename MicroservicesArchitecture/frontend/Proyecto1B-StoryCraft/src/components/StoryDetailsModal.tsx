@@ -7,6 +7,7 @@ import "../styles/StoryDetailsModal.css";
 
 interface StoryDetailsModalProps {
     story: Story;
+    chapters: Chapter[];
     onClose: () => void;
     onAddChapter: () => void;
     onChapterClick: (chapter: Chapter) => void;
