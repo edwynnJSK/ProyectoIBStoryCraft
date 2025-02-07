@@ -80,10 +80,10 @@ const CreateStoryDrawer: React.FC<CreateStoryDrawerProps> = ({
       formData.append('Content', chapterDetails.content);
       formData.append('ChapterNumber', chapterNumber.toString());
 
+
       if (chapterImage) {
         formData.append('Image', chapterImage); 
       }
-
       await createChapter(formData);
 
       return true;

@@ -41,8 +41,7 @@ export class StoriesController {
   @Post()
   async addStory(@Body() storyDto: CreateStoryDto) {
     try {
-      await this.storiesService.createStory(storyDto);
-      return { message: 'Hisstoria creada exitosamente' };
+      return await this.storiesService.createStory(storyDto);
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
