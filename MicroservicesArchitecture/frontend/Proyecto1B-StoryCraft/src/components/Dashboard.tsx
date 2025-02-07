@@ -6,6 +6,7 @@ import Chat from "./Chat";
 import CreateStory from './CreateStory';
 import CreateStoryDrawer from './CreateStoryDrawer';
 import StoryDetailsModal from './StoryDetailsModal'; // New import
+import EditStoryModal from './EditStoryModal'; // New import
 import { URL_IMAGE_STORY } from '../interfaces/stories';
 import ResetPassword from './ResetPassword';
 import "../styles/Dashboard.css"
@@ -25,6 +26,8 @@ const Dashboard: React.FC = () => {
     const [isResetPasswordModalVisible, setIsResetPasswordModalVisible] = useState(false);
     const [storyChapters, setStoryChapters] = useState<Chapter[]>([]);
     const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null);
+    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+    const [storyToEdit, setStoryToEdit] = useState<Story | null>(null);
 
     useEffect(() => {
         const fetchStories = async () => {
@@ -56,6 +59,20 @@ const Dashboard: React.FC = () => {
     };
 
     fetchStories();
+    };
+
+    // Add the handler for story updates:
+    const handleStoryUpdated = async (updatedStory: Story) => {
+        // Update the stories list
+        const updatedStories = stories.map(story => 
+        story.StoryID === updatedStory.StoryID ? updatedStory : story
+        );
+        setStories(updatedStories);
+
+        // Update the selected story if it's currently being viewed
+    if (selectedStory?.StoryID === updatedStory.StoryID) {
+        setSelectedStory(updatedStory);
+    }
     };
 
     const toggleDropdown = () => setIsOpen(!isOpen);
@@ -161,6 +178,18 @@ const Dashboard: React.FC = () => {
           />
         )}
 
+        {storyToEdit && (
+        <EditStoryModal
+            show={isEditModalVisible}
+            onHide={() => {
+            setIsEditModalVisible(false);
+            setStoryToEdit(null);
+            }}
+            story={storyToEdit}
+            onStoryUpdated={handleStoryUpdated}
+        />
+        )}
+
         <ResetPassword
           show={isResetPasswordModalVisible}
           onHide={() => setIsResetPasswordModalVisible(false)}
@@ -225,6 +254,10 @@ const Dashboard: React.FC = () => {
                         onAddChapter={handleAddNewChapter}
                         onChapterClick={handleChapterClick}
                         onDeleteStory={handleDeleteStory} // Linea agrgada para eliminar historia
+                        onEditStory={(story) => {
+                            setStoryToEdit(story);
+                            setIsEditModalVisible(true);
+                          }}
                     />
                 )}
 

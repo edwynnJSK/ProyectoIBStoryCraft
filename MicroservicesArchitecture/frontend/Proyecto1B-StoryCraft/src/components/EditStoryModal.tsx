@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { Story, updateStory } from '../api/storiesAPI';
 import { useAuth } from "../context/AuthContext";
-import { createStory, Story } from '../api/storiesAPI';
 
-interface CreateStoryProps {
+interface EditStoryModalProps {
   show: boolean;
   onHide: () => void;
-  onStoryCreated: (story: Story) => void;
-  onDashboardRefresh?: () => void;  // New prop for dashboard refresh
+  story: Story;
+  onStoryUpdated: (story: Story) => void;
 }
 
-const CreateStory: React.FC<CreateStoryProps> = ({ 
+const EditStoryModal: React.FC<EditStoryModalProps> = ({ 
   show, 
   onHide, 
-  onStoryCreated,
-  onDashboardRefresh  // Add new prop 
+  story,
+  onStoryUpdated
 }) => {
   const { userID } = useAuth();
   const [storyDetails, setStoryDetails] = useState({
@@ -23,10 +23,22 @@ const CreateStory: React.FC<CreateStoryProps> = ({
     maturityRating: '',
     description: ''
   });
-
   const [storyImage, setStoryImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (story) {
+      setStoryDetails({
+        title: story.Title || '',
+        genre: story.Genre || '',
+        maturityRating: story.MaturityRating || '',
+        description: story.Description || ''
+      });
+      // Set image preview from existing story
+      setImagePreview(`http://localhost:3000/${story.ImagePath}`);
+    }
+  }, [story]);
 
   const handleStoryDetailsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -49,65 +61,31 @@ const CreateStory: React.FC<CreateStoryProps> = ({
     }
   };
 
-  const handleCreateStory = async () => {
-    // Validate story details
-    if (!storyDetails.title || !storyDetails.genre || !storyDetails.maturityRating) {
-      setError('Por favor complete todos los campos obligatorios');
-      return;
-    }
-
+  const handleUpdateStory = async () => {
     try {
       const formData = new FormData();
       formData.append('Title', storyDetails.title);
       formData.append('Description', storyDetails.description);
       formData.append('Genre', storyDetails.genre);
       formData.append('MaturityRating', storyDetails.maturityRating);
-      if (userID) {
-        formData.append('AuthorID', userID.toString());
-      } else {
-        throw new Error('User ID is null');
-      }
-      formData.append('Status', 'draft');
+      
       if (storyImage) {
-        formData.append('Image', storyImage); 
+        formData.append('Image', storyImage);
       }
 
-      const newStory = await createStory(formData);
-
-      // Call the callback to move to next step
-      onStoryCreated(newStory);
-      
-      // Trigger dashboard refresh if callback is provided
-      onDashboardRefresh && onDashboardRefresh();
-      
-      onHide(); // Close the modal
+      const updatedStory = await updateStory(story.StoryID, formData);
+      onStoryUpdated(updatedStory);
+      onHide();
     } catch (err) {
-      console.error('Error creating story:', err);
-      setError('Error al crear la historia');
+      console.error('Error updating story:', err);
+      setError('Error al actualizar la historia');
     }
-  };
-
-  const resetForm = () => {
-    setStoryDetails({
-      title: '',
-      genre: '',
-      maturityRating: '',
-      description: ''
-    });
-    setStoryImage(null);
-    setImagePreview(null);
-    setError('');
-  };
-
-  const handleCancel = () => {
-    resetForm();
-    onHide();
   };
 
   return (
     <Modal show={show} onHide={onHide} centered size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>Crear Nueva Historia</Modal.Title>
+        <Modal.Title>Editar Historia</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {error && <div className="alert alert-danger">{error}</div>}
@@ -180,11 +158,7 @@ const CreateStory: React.FC<CreateStoryProps> = ({
                 <img 
                   src={imagePreview} 
                   alt="Preview" 
-                  style={{ 
-                    maxWidth: '100%', 
-                    maxHeight: '300px', 
-                    objectFit: 'contain' 
-                  }} 
+                  style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }}
                 />
               </div>
             )}
@@ -192,19 +166,19 @@ const CreateStory: React.FC<CreateStoryProps> = ({
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleCancel}>
+        <Button variant="secondary" onClick={onHide}>
           Cancelar
         </Button>
         <Button 
           variant="primary" 
-          onClick={handleCreateStory}
+          onClick={handleUpdateStory}
           disabled={!storyDetails.title || !storyDetails.genre || !storyDetails.maturityRating}
         >
-          Crear Historia
+          Guardar Cambios
         </Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default CreateStory;
+export default EditStoryModal;

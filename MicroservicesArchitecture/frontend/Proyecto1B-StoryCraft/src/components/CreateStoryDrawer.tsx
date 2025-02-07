@@ -11,7 +11,7 @@ interface CreateStoryDrawerProps {
 }
 
 const CreateStoryDrawer: React.FC<CreateStoryDrawerProps> = ({ 
-  show, 
+  show,
   onHide, 
   story,
   onDashboardRefresh  // Add new prop

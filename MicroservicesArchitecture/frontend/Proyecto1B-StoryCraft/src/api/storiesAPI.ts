@@ -131,4 +131,20 @@ export const deleteStory = async (storyId: number): Promise<void> => {
   }
 };
 
+export const updateStory = async (storyId: number, storyData: FormData): Promise<Story> => {
+  const token = localStorage?.getItem('token');
+  const response = await fetch(`http://localhost:3000/stories/${storyId}`, {
+    method: 'PATCH',
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: storyData,
+  });
 
+  if (!response.ok) {
+    throw new Error('Failed to update story');
+  }
+
+  const updatedStory: Story = await response.json();
+  return updatedStory;
+};
