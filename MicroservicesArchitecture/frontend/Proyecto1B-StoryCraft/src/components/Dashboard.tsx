@@ -62,17 +62,23 @@ const Dashboard: React.FC = () => {
     };
 
     // Add the handler for story updates:
-    const handleStoryUpdated = async (updatedStory: Story) => {
-        // Update the stories list
-        const updatedStories = stories.map(story => 
-        story.StoryID === updatedStory.StoryID ? updatedStory : story
+    const handleStoryUpdated = (updatedStory: Story) => {
+        // Update stories list
+        setStories(prevStories =>
+            prevStories.map(story =>
+                story.StoryID === updatedStory.StoryID ? updatedStory : story
+            )
         );
-        setStories(updatedStories);
 
-        // Update the selected story if it's currently being viewed
-    if (selectedStory?.StoryID === updatedStory.StoryID) {
-        setSelectedStory(updatedStory);
-    }
+        // Update selected story if it's currently being viewed
+        if (selectedStory?.StoryID === updatedStory.StoryID) {
+            setSelectedStory(updatedStory);
+        }
+
+        // Close all modals
+        setIsEditModalVisible(false);
+        setStoryToEdit(null);
+        setSelectedStory(null);
     };
 
     const toggleDropdown = () => setIsOpen(!isOpen);
@@ -178,17 +184,17 @@ const Dashboard: React.FC = () => {
           />
         )}
 
-        {storyToEdit && (
-        <EditStoryModal
-            show={isEditModalVisible}
-            onHide={() => {
-            setIsEditModalVisible(false);
-            setStoryToEdit(null);
-            }}
-            story={storyToEdit}
-            onStoryUpdated={handleStoryUpdated}
-        />
-        )}
+            {storyToEdit && (
+                <EditStoryModal
+                    show={isEditModalVisible}
+                    onHide={() => {
+                        setIsEditModalVisible(false);
+                        setStoryToEdit(null);
+                    }}
+                    story={storyToEdit}
+                    onStoryUpdated={handleStoryUpdated}
+                />
+            )}
 
         <ResetPassword
           show={isResetPasswordModalVisible}
@@ -247,19 +253,20 @@ const Dashboard: React.FC = () => {
 
                 {/* Story Details Modal */}
                 {selectedStory && (
-                    <StoryDetailsModal
-                        story={selectedStory}
-                        chapters={storyChapters}
-                        onClose={closeStoryModal}
-                        onAddChapter={handleAddNewChapter}
-                        onChapterClick={handleChapterClick}
-                        onDeleteStory={handleDeleteStory} // Linea agrgada para eliminar historia
-                        onEditStory={(story) => {
-                            setStoryToEdit(story);
-                            setIsEditModalVisible(true);
-                          }}
-                    />
-                )}
+                <StoryDetailsModal
+                    story={selectedStory}
+                    chapters={storyChapters}
+                    onClose={closeStoryModal}
+                    onAddChapter={handleAddNewChapter}
+                    onChapterClick={handleChapterClick}
+                    onDeleteStory={handleDeleteStory}
+                    onEditStory={(story) => {
+                        setStoryToEdit(story);
+                        setIsEditModalVisible(true);
+                    }}
+                    onStoryUpdated={handleStoryUpdated} // Add this prop
+                />
+            )}
 
                 {/* Chapter Content Modal */}
                 {selectedChapter && (

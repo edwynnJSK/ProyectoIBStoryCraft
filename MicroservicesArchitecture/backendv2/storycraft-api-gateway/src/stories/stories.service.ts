@@ -54,14 +54,20 @@ export class StoriesService {
       const response = await lastValueFrom(
         this.httpService.patch(
           `${process.env.STORIES_ENDPOINT}/stories/${storyId}`,
-          data,
+          data
         ),
       );
+      
+      if (!response.data) {
+        throw new Error('No data received from update operation');
+      }
+      
       return response.data;
     } catch (error) {
+      console.error('Error updating story:', error);
       throw new HttpException(
-        error.response.data.message,
-        error.response.data.statusCode,
+        error.response?.data?.message || 'Error updating story',
+        error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

@@ -13,6 +13,7 @@ interface StoryDetailsModalProps {
     onChapterClick: (chapter: Chapter) => void;
     onDeleteStory: (storyID: number) => void;  // New prop for deletion
     onEditStory: (story: Story) => void;
+    onStoryUpdated: (story: Story) => void; // Add this prop for updating story
 }
 
 const StoryDetailsModal: React.FC<StoryDetailsModalProps> = ({
@@ -21,27 +22,52 @@ const StoryDetailsModal: React.FC<StoryDetailsModalProps> = ({
     onAddChapter,
     onChapterClick,
     onDeleteStory,
-    onEditStory   // New prop for deletion
+    onEditStory,   // New prop for deletion
+    onStoryUpdated
 }) => {
+    const [currentStory, setCurrentStory] = useState<Story>(story); // New state for story
     const [chapters, setChapters] = useState<Chapter[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+
+    
+
+    // Efecto para actualizar la historia actual
+    useEffect(() => {
+        setCurrentStory(story);
+    }, [story]);
+    
+    // Nuevo manejador para actualizar la historia
+    const handleStoryUpdate = (updatedStory: Story) => {
+        setCurrentStory(updatedStory);
+        onStoryUpdated(updatedStory); // Propaga la actualización al Dashboard
+        onClose(); // Cierra el modal después de la actualización
+    };
 
     useEffect(() => {
         const fetchChapters = async () => {
             try {
                 setIsLoading(true);
+                setError(null); // Reset error state
                 const fetchedChapters = await getChaptersByStoryId(story.StoryID);
+                
+                // Check if fetchedChapters is null or undefined
+                if (!fetchedChapters) {
+                    throw new Error('No chapters found');
+                }
+                
                 setChapters(fetchedChapters);
-                setIsLoading(false);
-            } catch (error) {
-                console.error('Failed to fetch chapters:', error);
-                setError('Failed to load chapters');
+            } catch (err) {
+                console.error('Failed to fetch chapters:', err);
+                setError('No hay capítulos disponibles para esta historia');
+            } finally {
                 setIsLoading(false);
             }
         };
 
-        fetchChapters();
+        if (story.StoryID) {
+            fetchChapters();
+        }
     }, [story.StoryID]);
 
     return (
@@ -49,7 +75,8 @@ const StoryDetailsModal: React.FC<StoryDetailsModalProps> = ({
             <div className="modal-content-custom modal-lg">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">{story.Title}</h5>
+                        <h5 className="modal-title">{currentStory.Title}</h5>   
+                        {/* <h5 className="modal-title">{story.Title}</h5> */}
                         <button
                             type="button"
                             className="close"
@@ -61,23 +88,30 @@ const StoryDetailsModal: React.FC<StoryDetailsModalProps> = ({
                         <div className="row">
                             <div className="col-md-4">
                                 <img
+                                    src={`${URL_IMAGE_STORY}${currentStory.ImagePath}`} // Changed to currentStory.ImagePath
+                                    alt={currentStory.Title}
+                                    className="img-fluid"
+                                />
+                                {/* <img
                                     src={`${URL_IMAGE_STORY}${story.ImagePath}`}
                                     alt={story.Title}
                                     className="img-fluid"
-                                />
+                                /> */}
                             </div>
                             <div className="col-md-8">
                                 <p>{story.Description || 'No description available'}</p>
                                 
                                 {isLoading ? (
-                                    <p>Loading chapters...</p>
+                                    <p>Cargando capítulos...</p>
                                 ) : error ? (
-                                    <p className="text-danger">{error}</p>
-                                ) : (
+                                    <p className="text-muted">{error}</p>
+                                ) : chapters.length > 0 ? (
                                     <ChaptersList
                                         chapters={chapters}
                                         onChapterClick={onChapterClick}
                                     />
+                                ) : (
+                                    <p className="text-muted">Esta historia aún no tiene capítulos</p>
                                 )}
                             </div>
                         </div>
@@ -97,7 +131,8 @@ const StoryDetailsModal: React.FC<StoryDetailsModalProps> = ({
                         </button>
                         <button
                             className="btn btn-warning"  // New edit button
-                            onClick={() => onEditStory(story)}
+                            onClick={() => onEditStory(currentStory)}   // Changed to currentStory
+                            // onClick={() => onEditStory(story)}
                         >
                             Editar historia
                         </button>

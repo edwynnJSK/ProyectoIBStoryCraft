@@ -17,10 +17,12 @@ import { CreateStoryDto } from './dto/create-storie.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageUploader } from 'src/image-manager.service';
 
-
 @Controller('stories')
 export class StoriesController {
-  constructor(private storiesService: StoriesService, private imageManagerService: ImageUploader) {}
+  constructor(
+    private storiesService: StoriesService,
+    private imageManagerService: ImageUploader,
+  ) {}
 
   @Get()
   async getStories() {

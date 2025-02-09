@@ -63,24 +63,30 @@ const EditStoryModal: React.FC<EditStoryModalProps> = ({
 
   const handleUpdateStory = async () => {
     try {
-      const formData = new FormData();
-      formData.append('Title', storyDetails.title);
-      formData.append('Description', storyDetails.description);
-      formData.append('Genre', storyDetails.genre);
-      formData.append('MaturityRating', storyDetails.maturityRating);
-      
-      if (storyImage) {
-        formData.append('Image', storyImage);
-      }
+        setError(''); // Reset error state
+        
+        const updateData: Partial<Story> = {
+            Title: storyDetails.title,
+            Description: storyDetails.description,
+            Genre: storyDetails.genre,
+            MaturityRating: storyDetails.maturityRating,
+            // Include any other fields that need updating
+        };
+  
+        const updatedStory = await updateStory(story.StoryID, updateData);
+        
+        if (!updatedStory) {
+            throw new Error('Failed to update story');
+        }
 
-      const updatedStory = await updateStory(story.StoryID, formData);
-      onStoryUpdated(updatedStory);
-      onHide();
+        // Update the story in parent components
+        onStoryUpdated(updatedStory);
+        onHide();
     } catch (err) {
-      console.error('Error updating story:', err);
-      setError('Error al actualizar la historia');
+        console.error('Error updating story:', err);
+        setError('Error al actualizar la historia. Por favor, intente nuevamente.');
     }
-  };
+};
 
   return (
     <Modal show={show} onHide={onHide} centered size="lg">
