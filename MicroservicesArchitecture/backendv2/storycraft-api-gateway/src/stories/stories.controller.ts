@@ -70,20 +70,37 @@ export class StoriesController {
   }
 
   @Patch('/:storyId')
-  async updateStory(
-    @Param('storyId') storyID: string,
-    @Body() updateStoryDto: UpdateStoryDto,
-  ) {
-    try {
-      const updatedStory = await this.storiesService.updateStoryByID(
-        storyID,
-        updateStoryDto,
-      );
-      return updatedStory;
-    } catch (error) {
-      throw new HttpException(error.message, error.status);
-    }
+async updateStory(
+  @Param('storyId') storyID: string,
+  @Body() updateStoryDto: UpdateStoryDto,
+) {
+  try {
+    const updatedStory = await this.storiesService.updateStoryByID(
+      storyID,
+      updateStoryDto,
+    );
+    return updatedStory;
+  } catch (error) {
+    throw new HttpException(error.message, error.status);
   }
+}
+
+@Patch('/:storyId/image')
+@UseInterceptors(
+  FileInterceptor('Image', { storage: ImageUploader.getImageUploader() }),
+)
+async updateStoryImage(
+  @Param('storyId') storyID: string,
+  @UploadedFile() file: Express.Multer.File,
+) {
+  try {
+    const ImagePath = file ? `/images/${file.filename}` : null;
+    const updatedStory = await this.storiesService.updateStoryByID(storyID, { ImagePath });
+    return updatedStory;
+  } catch (error) {
+    throw new HttpException(error.message, error.status);
+  }
+}
 
   @Delete('/:storyId')
   async deleteStory(@Param('storyId') storyID: string) {

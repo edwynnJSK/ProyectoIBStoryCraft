@@ -131,14 +131,15 @@ export const deleteStory = async (storyId: number): Promise<void> => {
   }
 };
 
-export const updateStory = async (storyId: number, storyData: FormData): Promise<Story> => {
+export const updateStory = async (storyId: number, storyData: Partial<Story>): Promise<Story> => {
   const token = localStorage?.getItem('token');
   const response = await fetch(`http://localhost:3000/stories/${storyId}`, {
     method: 'PATCH',
     headers: {
+      'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: storyData,
+    body: JSON.stringify(storyData),
   });
 
   if (!response.ok) {
