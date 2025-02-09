@@ -19,7 +19,7 @@ import { ImageUploader } from 'src/image-manager.service';
 
 @Controller('chapters')
 export class ChaptersController {
-  constructor(private chaptersService: ChaptersService, private imageManagerService: ImageUploader) {}
+  constructor(private chaptersService: ChaptersService) {}
 
   @Get()
   async getChapters() {
@@ -90,7 +90,7 @@ export class ChaptersController {
 
       if (file) {
         newImagePath = `/images/${file.filename}`;
-        await this.imageManagerService.deleteOldImage(existingChapter.ImagePath);
+        ImageUploader.deleteOldImage(existingChapter.ImagePath);
       }
       const updatedChapter = await this.chaptersService.updateChapterByID(
         chapterID,
@@ -107,7 +107,7 @@ export class ChaptersController {
     try {
       const existingChapter = await this.chaptersService.getChapterByID(chapterID);
       if (existingChapter) {
-        await this.imageManagerService.deleteOldImage(existingChapter.ImagePath);
+        ImageUploader.deleteOldImage(existingChapter.ImagePath);
       }
       return await this.chaptersService.deleteChapterByID(chapterID);
     } catch (error) {

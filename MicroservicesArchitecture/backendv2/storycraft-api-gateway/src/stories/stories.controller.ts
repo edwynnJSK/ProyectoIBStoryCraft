@@ -19,10 +19,7 @@ import { ImageUploader } from 'src/image-manager.service';
 
 @Controller('stories')
 export class StoriesController {
-  constructor(
-    private storiesService: StoriesService,
-    private imageManagerService: ImageUploader,
-  ) {}
+  constructor(private storiesService: StoriesService) {}
 
   @Get()
   async getStories() {
@@ -87,10 +84,9 @@ export class StoriesController {
       }
 
       let newImagePath = existingStory.ImagePath;
-
       if (file) {
         newImagePath = `/images/${file.filename}`;
-        await this.imageManagerService.deleteOldImage(existingStory.ImagePath);
+        ImageUploader.deleteOldImage(existingStory.ImagePath);
       }
 
       const updatedStory = await this.storiesService.updateStoryByID(storyID, {
@@ -108,7 +104,7 @@ export class StoriesController {
     try {
       const existingStory = await this.storiesService.getStoryByID(storyID);
       if (existingStory) {
-        await this.imageManagerService.deleteOldImage(existingStory.ImagePath);
+        ImageUploader.deleteOldImage(existingStory.ImagePath);
       }
       return await this.storiesService.deleteStoryByID(storyID);
     } catch (error) {

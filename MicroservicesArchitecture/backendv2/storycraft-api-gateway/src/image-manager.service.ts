@@ -16,14 +16,13 @@ export class ImageUploader {
     return storage;
   }
 
-  async deleteOldImage(imagePath: string) {
+  static deleteOldImage(imagePath: string) {
     if (!imagePath || imagePath === '/images/default-story-image.jpg') {
       return;
     }
 
     try {
       const absolutePath = path.join('public', imagePath);
-      console.log(`path que va: ${absolutePath}`);
       if (fs.existsSync(absolutePath)) {
         fs.unlinkSync(absolutePath);
         console.log(`Imagen eliminada: ${absolutePath}`);
