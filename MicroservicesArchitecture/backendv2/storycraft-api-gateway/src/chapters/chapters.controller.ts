@@ -19,7 +19,7 @@ import { ImageUploader } from 'src/image-manager.service';
 
 @Controller('chapters')
 export class ChaptersController {
-  constructor(private chaptersService: ChaptersService) {}
+  constructor(private chaptersService: ChaptersService, private imageManagerService: ImageUploader) {}
 
   @Get()
   async getChapters() {
@@ -72,14 +72,29 @@ export class ChaptersController {
   }
 
   @Patch('/:chapterId')
+  @UseInterceptors(
+    FileInterceptor('Image', { storage: ImageUploader.getImageUploader() }),
+  )
   async updateChapter(
     @Param('chapterId') chapterID: string,
     @Body() updateChapterDto: UpdateChapterDto,
+    @UploadedFile() file: Express.Multer.File
   ) {
     try {
+      const existingChapter = await this.chaptersService.getChapterByID(chapterID);
+      if (!existingChapter) {
+        throw new HttpException('Chapter not found', HttpStatus.NOT_FOUND);
+      }
+
+      let newImagePath = existingChapter.ImagePath;
+
+      if (file) {
+        newImagePath = `/images/${file.filename}`;
+        await this.imageManagerService.deleteOldImage(existingChapter.ImagePath);
+      }
       const updatedChapter = await this.chaptersService.updateChapterByID(
         chapterID,
-        updateChapterDto,
+        {...updateChapterDto, ImagePath: newImagePath},
       );
       return updatedChapter;
     } catch (error) {
@@ -90,6 +105,10 @@ export class ChaptersController {
   @Delete('/:chapterId')
   async deleteChapter(@Param('chapterId') chapterID: string) {
     try {
+      const existingChapter = await this.chaptersService.getChapterByID(chapterID);
+      if (existingChapter) {
+        await this.imageManagerService.deleteOldImage(existingChapter.ImagePath);
+      }
       return await this.chaptersService.deleteChapterByID(chapterID);
     } catch (error) {
       throw new HttpException(error.message, error.status);

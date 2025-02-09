@@ -36,7 +36,7 @@ const EditStoryModal: React.FC<EditStoryModalProps> = ({
         description: story.Description || ''
       });
       // Set image preview from existing story
-      setImagePreview(`http://localhost:3000/${story.ImagePath}`);
+      setImagePreview(`http://localhost:3000${story.ImagePath}`);
     }
   }, [story]);
 

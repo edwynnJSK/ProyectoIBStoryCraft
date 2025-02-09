@@ -24,5 +24,6 @@ import { LoggingInterceptor } from './common/log-interceptor.service';
       useClass: LoggingInterceptor,
     },
   ],
+  exports:[ImageUploader]
 })
 export class AppModule {}

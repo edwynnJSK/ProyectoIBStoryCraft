@@ -17,9 +17,10 @@ import { CreateStoryDto } from './dto/create-storie.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageUploader } from 'src/image-manager.service';
 
+
 @Controller('stories')
 export class StoriesController {
-  constructor(private storiesService: StoriesService) {}
+  constructor(private storiesService: StoriesService, private imageManagerService: ImageUploader) {}
 
   @Get()
   async getStories() {
@@ -42,14 +43,13 @@ export class StoriesController {
     }
   }
 
-  
   @Post()
   @UseInterceptors(
-    FileInterceptor('Image', {storage: ImageUploader.getImageUploader()} ),
+    FileInterceptor('Image', { storage: ImageUploader.getImageUploader() }),
   )
   async addStory(
     @Body() storyDto: CreateStoryDto,
-    @UploadedFile() file: Express.Multer.File
+    @UploadedFile() file: Express.Multer.File,
   ) {
     const ImagePath = file
       ? `/images/${file.filename}`
@@ -70,15 +70,31 @@ export class StoriesController {
   }
 
   @Patch('/:storyId')
+  @UseInterceptors(
+    FileInterceptor('Image', { storage: ImageUploader.getImageUploader() }),
+  )
   async updateStory(
     @Param('storyId') storyID: string,
     @Body() updateStoryDto: UpdateStoryDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
     try {
-      const updatedStory = await this.storiesService.updateStoryByID(
-        storyID,
-        updateStoryDto,
-      );
+      const existingStory = await this.storiesService.getStoryByID(storyID);
+      if (!existingStory) {
+        throw new HttpException('Story not found', HttpStatus.NOT_FOUND);
+      }
+
+      let newImagePath = existingStory.ImagePath;
+
+      if (file) {
+        newImagePath = `/images/${file.filename}`;
+        await this.imageManagerService.deleteOldImage(existingStory.ImagePath);
+      }
+
+      const updatedStory = await this.storiesService.updateStoryByID(storyID, {
+        ...updateStoryDto,
+        ImagePath: newImagePath,
+      });
       return updatedStory;
     } catch (error) {
       throw new HttpException(error.message, error.status);
@@ -88,6 +104,10 @@ export class StoriesController {
   @Delete('/:storyId')
   async deleteStory(@Param('storyId') storyID: string) {
     try {
+      const existingStory = await this.storiesService.getStoryByID(storyID);
+      if (existingStory) {
+        await this.imageManagerService.deleteOldImage(existingStory.ImagePath);
+      }
       return await this.storiesService.deleteStoryByID(storyID);
     } catch (error) {
       throw new HttpException(error.message, error.status);
