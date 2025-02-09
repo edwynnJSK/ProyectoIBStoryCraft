@@ -57,7 +57,7 @@ export class StoriesController {
         parseInt(storyID),
         updateStoryDto,
       );
-      return { message: 'Hisstoria actualizada exitosamente' };
+      return { message: 'Historia actualizada exitosamente' };
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
