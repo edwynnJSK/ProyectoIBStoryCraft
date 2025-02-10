@@ -119,7 +119,7 @@ const Dashboard: React.FC = () => {
             console.error('Error fetching story details:', err);
         }
     };
- 
+    
     const toggleModal = () => {
         setIsOpen(false);
         setSelectedStory(null);
@@ -149,6 +149,13 @@ const Dashboard: React.FC = () => {
             setSelectedCreatedStory(selectedStory);
         }
     };
+
+    const handleChapterCreated = async () => {
+        if (selectedStory) {
+          const updatedChapters = await getChaptersByStoryId(selectedStory.StoryID);
+          setStoryChapters(updatedChapters);
+        }
+      };
 
     //codigo agregado para eliminar historia
     const handleDeleteStory = async (storyId: number) => {
@@ -219,6 +226,7 @@ const Dashboard: React.FC = () => {
             show={!!selectedCreatedStory}
             onHide={() => setSelectedCreatedStory(null)}
             story={selectedCreatedStory}
+            onChapterCreated={handleChapterCreated}
           />
         )}
 
@@ -302,7 +310,7 @@ const Dashboard: React.FC = () => {
                         setStoryToEdit(story);
                         setIsEditModalVisible(true);
                     }}
-                    onStoryUpdated={handleStoryUpdated} // Add this prop
+                    onStoryUpdated={handleStoryUpdated}
                 />
             )}
 

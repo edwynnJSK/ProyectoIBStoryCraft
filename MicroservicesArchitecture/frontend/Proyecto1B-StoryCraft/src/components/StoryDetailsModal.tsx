@@ -18,15 +18,16 @@ interface StoryDetailsModalProps {
 
 const StoryDetailsModal: React.FC<StoryDetailsModalProps> = ({
     story,
+    chapters,
     onClose,
     onAddChapter,
     onChapterClick,
     onDeleteStory,
-    onEditStory,   // New prop for deletion
+    onEditStory,
     onStoryUpdated
 }) => {
     const [currentStory, setCurrentStory] = useState<Story>(story); // New state for story
-    const [chapters, setChapters] = useState<Chapter[]>([]);
+    //const [chapters, setChapters] = useState<Chapter[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -56,7 +57,7 @@ const StoryDetailsModal: React.FC<StoryDetailsModalProps> = ({
                     throw new Error('No chapters found');
                 }
                 
-                setChapters(fetchedChapters);
+                //setChapters(fetchedChapters);
             } catch (err) {
                 console.error('Failed to fetch chapters:', err);
                 setError('No hay capítulos disponibles para esta historia');

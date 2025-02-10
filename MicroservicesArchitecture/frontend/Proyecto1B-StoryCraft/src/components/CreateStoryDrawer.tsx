@@ -8,13 +8,15 @@ interface CreateStoryDrawerProps {
   onHide: () => void;
   story: Story;
   onDashboardRefresh?: () => void;  // New prop for dashboard refresh
+  onChapterCreated?: () => void;
 }
 
 const CreateStoryDrawer: React.FC<CreateStoryDrawerProps> = ({ 
   show,
   onHide, 
   story,
-  onDashboardRefresh  // Add new prop
+  onDashboardRefresh,  // Add new prop
+  onChapterCreated
 }) => {
   const navigate = useNavigate();
   const [chapterNumber, setChapterNumber] = useState(1);
@@ -85,7 +87,7 @@ const CreateStoryDrawer: React.FC<CreateStoryDrawerProps> = ({
         formData.append('Image', chapterImage); 
       }
       await createChapter(formData);
-
+      onChapterCreated?.(); // Notifica que se creó un capítulo
       return true;
     } catch (err) {
       console.error('Error creating chapter:', err);
@@ -97,7 +99,6 @@ const CreateStoryDrawer: React.FC<CreateStoryDrawerProps> = ({
   const handleAddAnotherChapter = async () => {
     // Try to create the current chapter
     const chapterCreated = await handleCreateChapter();
-    
     if (chapterCreated) {
       // Increment chapter number and reset form fields
       setChapterNumber(prev => prev + 1);
@@ -107,15 +108,10 @@ const CreateStoryDrawer: React.FC<CreateStoryDrawerProps> = ({
 
   const handleFinishAndClose = async () => {
     const chapterCreated = await handleCreateChapter();
-    
     if (chapterCreated) {
       resetForm();
       onHide();
-      
-      // Trigger dashboard refresh if callback is provided
-      onDashboardRefresh && onDashboardRefresh();
-      
-      navigate('/dashboard');
+      onDashboardRefresh?.();
     }
   };
 
