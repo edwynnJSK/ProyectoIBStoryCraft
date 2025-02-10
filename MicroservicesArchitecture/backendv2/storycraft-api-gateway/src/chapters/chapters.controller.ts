@@ -16,12 +16,14 @@ import { CreateChapterDto } from './dto/create-chapter.dto';
 import { UpdateChapterDto } from './dto/update-chapter.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageUploader } from 'src/image-manager.service';
+import { Auth } from 'src/auth/decorators';
 
 @Controller('chapters')
 export class ChaptersController {
   constructor(private chaptersService: ChaptersService) {}
 
   @Get()
+  @Auth()
   async getChapters() {
     try {
       return await this.chaptersService.getAllChapters();
@@ -31,6 +33,7 @@ export class ChaptersController {
   }
 
   @Get('/:chapterId')
+  @Auth()
   async getChapter(@Param('chapterId') chapterID: string) {
     try {
       return await this.chaptersService.getChapterByID(chapterID);
@@ -40,6 +43,7 @@ export class ChaptersController {
   }
 
   @Get('/:chapterId/story/:storyId')
+  @Auth()
   async getUniqueChapter(@Param('chapterId') chapterID: string, @Param('storyId') storyId: string) {
     try {
       return await this.chaptersService.getUniqueChapter(chapterID, storyId);
@@ -53,6 +57,7 @@ export class ChaptersController {
   @UseInterceptors(
     FileInterceptor('Image', { storage: ImageUploader.getImageUploader() }),
   )
+  @Auth()
   async addChapter(
     @Body() createChapterDto: CreateChapterDto,
     @UploadedFile() file: Express.Multer.File,
@@ -75,6 +80,7 @@ export class ChaptersController {
   @UseInterceptors(
     FileInterceptor('Image', { storage: ImageUploader.getImageUploader() }),
   )
+  @Auth()
   async updateChapter(
     @Param('chapterId') chapterID: string,
     @Body() updateChapterDto: UpdateChapterDto,
@@ -103,6 +109,7 @@ export class ChaptersController {
   }
 
   @Delete('/:chapterId')
+  @Auth()
   async deleteChapter(@Param('chapterId') chapterID: string) {
     try {
       const existingChapter = await this.chaptersService.getChapterByID(chapterID);
@@ -116,6 +123,7 @@ export class ChaptersController {
   }
 
   @Get('/story/:storyId')
+  @Auth()
   async getChaptersByStory(@Param('storyId') storyID: string) {
     try {
       return await this.chaptersService.getChaptersByStoryId(storyID);

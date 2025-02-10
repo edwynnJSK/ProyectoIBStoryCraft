@@ -53,7 +53,6 @@ export class AuthController {
     @Param('userId') userId: string,
   ) {
     try {
-      console.log("prueba update", userInfo, userId)
       await this.authService.updateUser(parseInt(userId), userInfo);
       return { message: 'Usuario actualizado exitosamente' };
     } catch (error) {

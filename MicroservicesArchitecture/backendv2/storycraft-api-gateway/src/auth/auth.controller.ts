@@ -17,15 +17,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Get('/users')
-  async getUsers() {
-    try {
-      return await this.authService.getUsers();
-    } catch (error) {
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
   @Post('/register')
   async register(@Body() newUser: RegisterUserDto) {
     try {
@@ -51,10 +42,8 @@ export class AuthController {
     @Param('userId') userId: string,
   ) {
     try {
-      console.log("llega aca: ", userInfo)
       return await this.authService.updateUser(userId, userInfo);
     } catch (error) {
-      console.log("error", error)
       throw new HttpException(error.message, error.status);
     }
   }

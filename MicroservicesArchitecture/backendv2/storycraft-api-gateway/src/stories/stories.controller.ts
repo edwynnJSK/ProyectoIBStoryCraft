@@ -17,6 +17,7 @@ import { CreateStoryDto } from './dto/create-storie.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageUploader } from 'src/image-manager.service';
 import { ChaptersService } from 'src/chapters/chapters.service';
+import { Auth } from 'src/auth/decorators';
 
 @Controller('stories')
 export class StoriesController {
@@ -26,6 +27,7 @@ export class StoriesController {
   ) {}
 
   @Get()
+  @Auth()
   async getStories() {
     try {
       return await this.storiesService.getAllStories();
@@ -38,6 +40,7 @@ export class StoriesController {
   }
 
   @Get('/:storyId')
+  @Auth()
   async getStory(@Param('storyId') storyID: string) {
     try {
       return await this.storiesService.getStoryByID(storyID);
@@ -50,6 +53,7 @@ export class StoriesController {
   @UseInterceptors(
     FileInterceptor('Image', { storage: ImageUploader.getImageUploader() }),
   )
+  @Auth()
   async addStory(
     @Body() storyDto: CreateStoryDto,
     @UploadedFile() file: Express.Multer.File,
@@ -76,6 +80,7 @@ export class StoriesController {
   @UseInterceptors(
     FileInterceptor('Image', { storage: ImageUploader.getImageUploader() }),
   )
+  @Auth()
   async updateStory(
     @Param('storyId') storyID: string,
     @Body() updateStoryDto: UpdateStoryDto,
@@ -104,23 +109,37 @@ export class StoriesController {
   }
 
   @Delete('/:storyId')
+  @Auth()
   async deleteStory(@Param('storyId') storyID: string) {
     try {
       const existingStory = await this.storiesService.getStoryByID(storyID);
-      const existingChapters =
-        await this.chaptersService.getChaptersByStoryId(storyID);
+
+      let existingChapters = [];
+      try {
+        existingChapters =
+          await this.chaptersService.getChaptersByStoryId(storyID);
+      } catch (error) {
+        console.log(error)
+        if (error.status == 404) {
+          existingChapters = [];
+        } else {
+          throw error;
+        }
+      }
 
       if (existingStory) {
+        console.log('aca', existingStory);
         ImageUploader.deleteOldImage(existingStory.ImagePath);
       }
 
-      if (existingChapters && existingChapters.length > 0) {
+      if (existingChapters.length > 0) {
         existingChapters.forEach((chapter) => {
           if (chapter.ImagePath) {
             ImageUploader.deleteOldImage(chapter.ImagePath);
           }
         });
       }
+
       return await this.storiesService.deleteStoryByID(storyID);
     } catch (error) {
       throw new HttpException(error.message, error.status);
