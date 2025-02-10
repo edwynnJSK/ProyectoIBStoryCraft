@@ -16,10 +16,14 @@ import { StoriesService } from './stories.service';
 import { CreateStoryDto } from './dto/create-storie.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageUploader } from 'src/image-manager.service';
+import { ChaptersService } from 'src/chapters/chapters.service';
 
 @Controller('stories')
 export class StoriesController {
-  constructor(private storiesService: StoriesService) {}
+  constructor(
+    private storiesService: StoriesService,
+    private chaptersService: ChaptersService,
+  ) {}
 
   @Get()
   async getStories() {
@@ -103,8 +107,19 @@ export class StoriesController {
   async deleteStory(@Param('storyId') storyID: string) {
     try {
       const existingStory = await this.storiesService.getStoryByID(storyID);
+      const existingChapters =
+        await this.chaptersService.getChaptersByStoryId(storyID);
+
       if (existingStory) {
         ImageUploader.deleteOldImage(existingStory.ImagePath);
+      }
+
+      if (existingChapters && existingChapters.length > 0) {
+        existingChapters.forEach((chapter) => {
+          if (chapter.ImagePath) {
+            ImageUploader.deleteOldImage(chapter.ImagePath);
+          }
+        });
       }
       return await this.storiesService.deleteStoryByID(storyID);
     } catch (error) {

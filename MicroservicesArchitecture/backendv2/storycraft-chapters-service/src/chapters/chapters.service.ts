@@ -64,8 +64,18 @@ export class ChaptersService {
 
   async updateChapterByID(chapterID: number, data: UpdateChapterDto) {
     try {
+      const { ChapterNumber, ...rest } = data;
+    
+      const existingChapter = await this.getChapterByID(chapterID);
+      const parsedData: Omit<UpdateChapterDto, 'ChapterNumber'> & {
+        ChapterNumber?: number;
+      } = {
+        ...rest,
+        ChapterNumber: ChapterNumber ? parseInt(ChapterNumber, 10) : existingChapter.ChapterNumber,
+      };
+
       const filteredData = Object.fromEntries(
-        Object.entries(data).filter(([_, value]) => value !== undefined),
+        Object.entries(parsedData).filter(([_, value]) => value !== undefined),
       );
 
       await this.prisma.chapters.update({

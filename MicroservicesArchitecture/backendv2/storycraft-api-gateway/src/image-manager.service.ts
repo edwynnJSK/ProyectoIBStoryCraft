@@ -17,7 +17,7 @@ export class ImageUploader {
   }
 
   static deleteOldImage(imagePath: string) {
-    if (!imagePath || imagePath === '/images/default-story-image.jpg') {
+    if (!imagePath || imagePath === '/images/default-story-image.jpg' || imagePath === '/images/default-chapter-image.jpg') {
       return;
     }
 
