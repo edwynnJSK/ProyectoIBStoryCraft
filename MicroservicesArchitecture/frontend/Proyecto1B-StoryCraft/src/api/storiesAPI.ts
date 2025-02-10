@@ -38,10 +38,12 @@ export const getStories = async (): Promise<Story[]> => {
 };
 
 export const getStoryById = async (storyID: number): Promise<Story> => {
+  const token = localStorage?.getItem("token");
   const response = await fetch(`http://localhost:3000/stories/${storyID}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
 
@@ -54,8 +56,12 @@ export const getStoryById = async (storyID: number): Promise<Story> => {
 };
 
 export const createStory = async (storyData: FormData): Promise<Story> => {
+  const token = localStorage?.getItem("token");
   const response = await fetch("http://localhost:3000/stories", {
     method: "POST",
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     body: storyData,
   });
 
@@ -70,8 +76,12 @@ export const createStory = async (storyData: FormData): Promise<Story> => {
 export const createChapter = async (
   chapterData: FormData
 ): Promise<Chapter> => {
+  const token = localStorage?.getItem("token");
   const response = await fetch("http://localhost:3000/chapters", {
     method: "POST",
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     body: chapterData,
   });
 
@@ -107,12 +117,14 @@ export const createStoryWithImage = async (
 export const getChaptersByStoryId = async (
   storyID: number
 ): Promise<Chapter[]> => {
+  const token = localStorage?.getItem("token");
   const response = await fetch(
     `http://localhost:3000/chapters/story/${storyID}`,
     {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     }
   );
@@ -125,7 +137,6 @@ export const getChaptersByStoryId = async (
   return chapters;
 };
 
-//Funciona la eliminación de historias
 export const deleteStory = async (storyId: number): Promise<void> => {
   const token = localStorage?.getItem("token");
   const response = await fetch(`http://localhost:3000/stories/${storyId}`, {
