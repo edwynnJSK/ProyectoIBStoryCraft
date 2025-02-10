@@ -141,6 +141,21 @@ export const deleteStory = async (storyId: number): Promise<void> => {
   }
 };
 
+export const deleteChapter = async (chapterId: number): Promise<void> => {
+  const token = localStorage?.getItem("token");
+  const response = await fetch(`http://localhost:3000/chapters/${chapterId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete chapter");
+  }
+};
+
 export const updateStory = async (
   storyId: number,
   storyData: FormData
@@ -160,4 +175,25 @@ export const updateStory = async (
 
   const updatedStory: Story = await response.json();
   return updatedStory;
+};
+
+export const updateChapter = async (
+  chapterId: number, 
+  chapterData: FormData
+): Promise<Chapter> => {
+  const token = localStorage?.getItem("token");
+  const response = await fetch(`http://localhost:3000/chapters/${chapterId}`, {
+    method: 'PATCH',
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: chapterData, 
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update chapter");
+  }
+
+  const updatedChapter: Chapter = await response.json();
+  return updatedChapter;
 };

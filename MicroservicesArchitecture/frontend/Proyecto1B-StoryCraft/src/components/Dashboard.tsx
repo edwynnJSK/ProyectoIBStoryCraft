@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { getStories, getStoryById, Story, Chapter, getChaptersByStoryId, deleteStory } from '../api/storiesAPI';
+import { getStories, getStoryById, Story, Chapter, getChaptersByStoryId, deleteStory, deleteChapter, updateChapter } from '../api/storiesAPI';
 import Chat from "./Chat";
 import CreateStory from './CreateStory';
 import CreateStoryDrawer from './CreateStoryDrawer';
-import StoryDetailsModal from './StoryDetailsModal'; // New import
-import EditStoryModal from './EditStoryModal'; // New import
+import StoryDetailsModal from './StoryDetailsModal'; 
+import EditStoryModal from './EditStoryModal'; 
+import EditChapterModal from './EditChapterModal';
 import { URL_IMAGE_STORY } from '../interfaces/stories';
 import ResetPassword from './ResetPassword';
 import "../styles/Dashboard.css"
@@ -28,6 +29,8 @@ const Dashboard: React.FC = () => {
     const [selectedChapter, setSelectedChapter] = useState<Chapter | null>(null);
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [storyToEdit, setStoryToEdit] = useState<Story | null>(null);
+    const [isEditChapterModalVisible, setIsEditChapterModalVisible] = useState(false);
+    const [chapterToEdit, setChapterToEdit] = useState<Chapter | null>(null);
 
     useEffect(() => {
         const fetchStories = async () => {
@@ -80,6 +83,22 @@ const Dashboard: React.FC = () => {
         setStoryToEdit(null);
         setSelectedStory(null);
     };
+
+    const handleEditChapter = (chapter: Chapter) => {
+        setChapterToEdit(chapter);
+        setIsEditChapterModalVisible(true);
+      };
+
+    const handleChapterUpdated = async (updatedChapter: Chapter) => {
+        // Update chapters list if the current story is selected
+        if (selectedStory) {
+          const updatedChapters = await getChaptersByStoryId(selectedStory.StoryID);
+          setStoryChapters(updatedChapters);
+        }
+        
+        // Close the chapter modal
+        setSelectedChapter(null);
+      };
 
     const toggleDropdown = () => setIsOpen(!isOpen);
  
@@ -142,6 +161,25 @@ const Dashboard: React.FC = () => {
             setSelectedStory(null);
         } catch (error) {
             console.error('Failed to delete story:', error);
+        }
+    };
+
+    // In Dashboard.tsx, add a new handler method
+    const handleDeleteChapter = async (chapterId: number) => {
+        try {
+        await deleteChapter(chapterId);
+        
+        // If a story is currently selected, refresh its chapters
+        if (selectedStory) {
+            const updatedChapters = await getChaptersByStoryId(selectedStory.StoryID);
+            setStoryChapters(updatedChapters);
+        }
+        
+        // Close the chapter modal
+        setSelectedChapter(null);
+        } catch (error) {
+        console.error('Failed to delete chapter:', error);
+        // Optionally, show an error message to the user
         }
     };
 
@@ -293,10 +331,36 @@ const Dashboard: React.FC = () => {
                                     >
                                         Close
                                     </button>
+                                    <button 
+                                        className="btn btn-danger" 
+                                        onClick={() => handleDeleteChapter(selectedChapter.ChapterID!)}
+                                    >
+                                        Eliminar Capítulo
+                                    </button>
+                                    <button 
+                                    className="btn btn-warning" 
+                                    onClick={() => handleEditChapter(selectedChapter)}
+                                    >
+                                    Editar Capítulo
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                )}
+
+                {/* EditChapterModal */}
+                {chapterToEdit && selectedStory && (
+                    <EditChapterModal
+                    show={isEditChapterModalVisible}
+                    onHide={() => {
+                        setIsEditChapterModalVisible(false);
+                        setChapterToEdit(null);
+                    }}
+                    chapter={chapterToEdit}
+                    story={selectedStory}
+                    onChapterUpdated={handleChapterUpdated}
+                    />
                 )}
             </div>
           </>
