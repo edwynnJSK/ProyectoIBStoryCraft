@@ -65,23 +65,32 @@ const Dashboard: React.FC = () => {
     };
 
     // Add the handler for story updates:
-    const handleStoryUpdated = (updatedStory: Story) => {
-        // Update stories list
-        setStories(prevStories =>
-            prevStories.map(story =>
-                story.StoryID === updatedStory.StoryID ? updatedStory : story
-            )
-        );
+    const handleStoryUpdated = async (updatedStory: Story) => {
+        try {
+            // Actualizar la historia en la lista de historias
+            setStories(prevStories =>
+                prevStories.map(story =>
+                    story.StoryID === updatedStory.StoryID ? updatedStory : story
+                )
+            );
 
-        // Update selected story if it's currently being viewed
-        if (selectedStory?.StoryID === updatedStory.StoryID) {
-            setSelectedStory(updatedStory);
+            // Actualizar la historia seleccionada si está siendo visualizada
+            if (selectedStory?.StoryID === updatedStory.StoryID) {
+                setSelectedStory(updatedStory);
+            }
+
+            // Cerrar los modales
+            setIsEditModalVisible(false);
+            setStoryToEdit(null);
+            setSelectedStory(null);
+
+            // Forzar una actualización de la lista completa
+            const fetchedStories = await getStories();
+            setStories(fetchedStories);
+        } catch (err) {
+            console.error('Error updating story list:', err);
+            setError('Failed to update stories');
         }
-
-        // Close all modals
-        setIsEditModalVisible(false);
-        setStoryToEdit(null);
-        setSelectedStory(null);
     };
 
     const handleEditChapter = (chapter: Chapter) => {
@@ -104,8 +113,13 @@ const Dashboard: React.FC = () => {
  
     const handleStoryClick = async (story: Story) => {
         try {
+            // Buscar la historia actualizada en el estado actual
+            const currentStory = stories.find(s => s.StoryID === story.StoryID);
+            
             // Fetch full story details
             const fullStoryDetails = await getStoryById(story.StoryID);
+            
+            // Usar los detalles más recientes
             setSelectedStory(fullStoryDetails);
             
             // Fetch chapters for the story
@@ -114,7 +128,7 @@ const Dashboard: React.FC = () => {
             
             // Reset other states
             setSelectedChapter(null);
-            toggleDropdown(); // Close dropdown if it's open
+            toggleDropdown();
         } catch (err) {
             console.error('Error fetching story details:', err);
         }
@@ -230,17 +244,17 @@ const Dashboard: React.FC = () => {
           />
         )}
 
-            {storyToEdit && (
-                <EditStoryModal
-                    show={isEditModalVisible}
-                    onHide={() => {
-                        setIsEditModalVisible(false);
-                        setStoryToEdit(null);
-                    }}
-                    story={storyToEdit}
-                    onStoryUpdated={handleStoryUpdated}
-                />
-            )}
+        {storyToEdit && (
+            <EditStoryModal
+                show={isEditModalVisible}
+                onHide={() => {
+                    setIsEditModalVisible(false);
+                    setStoryToEdit(null);
+                }}
+                story={storyToEdit}
+                onStoryUpdated={handleStoryUpdated}
+            />
+        )}
 
         <ResetPassword
           show={isResetPasswordModalVisible}
