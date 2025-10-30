@@ -14,17 +14,11 @@ services:
       - sqlserver-data:/var/opt/mssql
     networks:
       - storycraft-network
-    healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Politecnica1! -Q "SELECT 1" || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
 
   # Auth Service
   auth-service:
     build:
-      context: ./storycraft-auth-service
+      context: ./backendv2/storycraft-auth-service
       dockerfile: Dockerfile
     container_name: storycraft-auth-service
     restart: always
@@ -37,19 +31,12 @@ services:
       - DATABASE_URL=sqlserver://sqlserver:1433;database=BDD_STORYCRAFT;user=usr_storycraft;password=Politecnica1;encrypt=true;trustServerCertificate=true
       - JWT_SECRET=S3cr3tK3y4JWT
     depends_on:
-      sqlserver:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      - sqlserver
 
   # Chapters Service
   chapters-service:
     build:
-      context: ./storycraft-chapters-service
+      context: ./backendv2/storycraft-chapters-service
       dockerfile: Dockerfile
     container_name: storycraft-chapters-service
     restart: always
@@ -61,19 +48,12 @@ services:
       - PORT=3003
       - DATABASE_URL=sqlserver://sqlserver:1433;database=BDD_STORYCRAFT;user=usr_storycraft;password=Politecnica1;encrypt=true;trustServerCertificate=true
     depends_on:
-      sqlserver:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3003/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      - sqlserver
 
   # Stories Service
   stories-service:
     build:
-      context: ./storycraft-stories-service
+      context: ./backendv2/storycraft-stories-service
       dockerfile: Dockerfile
     container_name: storycraft-stories-service
     restart: always
@@ -85,19 +65,12 @@ services:
       - PORT=3002
       - DATABASE_URL=sqlserver://sqlserver:1433;database=BDD_STORYCRAFT;user=usr_storycraft;password=Politecnica1;encrypt=true;trustServerCertificate=true
     depends_on:
-      sqlserver:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3002/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      - sqlserver
 
   # API Gateway
   api-gateway:
     build:
-      context: ./storycraft-api-gateway
+      context: ./backendv2/storycraft-api-gateway
       dockerfile: Dockerfile
     container_name: storycraft-api-gateway
     restart: always
@@ -112,18 +85,23 @@ services:
       - CHAPTERS_ENDPOINT=http://chapters-service:3003
       - JWT_SECRET=S3cr3tK3y4JWT
     depends_on:
-      auth-service:
-        condition: service_healthy
-      stories-service:
-        condition: service_healthy
-      chapters-service:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      - auth-service
+      - stories-service
+      - chapters-service
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend/Proyecto1B-StoryCraft
+      dockerfile: Dockerfile
+    container_name: storycraft-frontend
+    restart: always
+    networks:
+      - storycraft-network
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
 
 networks:
   storycraft-network:

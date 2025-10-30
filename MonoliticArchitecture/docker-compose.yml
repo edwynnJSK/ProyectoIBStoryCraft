@@ -1,0 +1,64 @@
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: storycraft-mono-sqlserver
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Politecnica1!
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - storycraft-mono-network
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Politecnica1! -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # Backend Monolítico
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: storycraft-mono-backend
+    restart: always
+    networks:
+      - storycraft-mono-network
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - DATABASE_URL=sqlserver://sqlserver:1433;database=BDD_STORYCRAFT;user=usr_storycraft;password=Politecnica1;encrypt=true;trustServerCertificate=true
+    volumes:
+      - backend-images:/usr/src/app/src/images
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend/Proyecto1B-StoryCraft
+      dockerfile: Dockerfile
+    container_name: storycraft-mono-frontend
+    restart: always
+    networks:
+      - storycraft-mono-network
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+networks:
+  storycraft-mono-network:
+    driver: bridge
+
+volumes:
+  sqlserver-data:
+  backend-images:

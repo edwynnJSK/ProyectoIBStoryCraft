@@ -13,7 +13,6 @@ interface StoryDetailsModalProps {
     onChapterClick: (chapter: Chapter) => void;
     onDeleteStory: (storyID: number) => void;  // New prop for deletion
     onEditStory: (story: Story) => void;
-    onStoryUpdated: (story: Story) => void; // Add this prop for updating story
 }
 
 const StoryDetailsModal: React.FC<StoryDetailsModalProps> = ({
@@ -23,8 +22,7 @@ const StoryDetailsModal: React.FC<StoryDetailsModalProps> = ({
     onAddChapter,
     onChapterClick,
     onDeleteStory,
-    onEditStory,
-    onStoryUpdated
+    onEditStory
 }) => {
     const [currentStory, setCurrentStory] = useState<Story>(story); // New state for story
     //const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -37,13 +35,6 @@ const StoryDetailsModal: React.FC<StoryDetailsModalProps> = ({
     useEffect(() => {
         setCurrentStory(story);
     }, [story]);
-    
-    // Nuevo manejador para actualizar la historia
-    const handleStoryUpdate = (updatedStory: Story) => {
-        setCurrentStory(updatedStory);
-        onStoryUpdated(updatedStory); // Propaga la actualización al Dashboard
-        onClose(); // Cierra el modal después de la actualización
-    };
 
     useEffect(() => {
         const fetchChapters = async () => {

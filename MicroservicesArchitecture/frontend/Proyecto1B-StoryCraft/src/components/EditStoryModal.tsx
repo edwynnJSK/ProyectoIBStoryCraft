@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { Story, updateStory } from '../api/storiesAPI';
-import { useAuth } from "../context/AuthContext";
 
 interface EditStoryModalProps {
   show: boolean;
@@ -16,7 +15,6 @@ const EditStoryModal: React.FC<EditStoryModalProps> = ({
   story,
   onStoryUpdated
 }) => {
-  const { userID } = useAuth();
   const [storyDetails, setStoryDetails] = useState({
     title: '',
     genre: '',

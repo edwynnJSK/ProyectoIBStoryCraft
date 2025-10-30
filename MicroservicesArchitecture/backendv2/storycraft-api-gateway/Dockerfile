@@ -7,9 +7,6 @@ WORKDIR /usr/src/app
 COPY ["package.json", "package-lock.json*", "./"]
 RUN npm install
 
-# Copiar el archivo .env al contenedor
-COPY .env ./.env
-
 # Copiar la carpeta de logs
 COPY logs ./logs/
 

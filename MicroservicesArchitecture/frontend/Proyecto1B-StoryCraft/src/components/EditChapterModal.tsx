@@ -15,10 +15,9 @@ const EditChapterModal: React.FC<EditChapterModalProps> = ({
   show,
   onHide, 
   chapter,
-  story,
   onChapterUpdated
 }) => {
-    const [chapterNumber, setChapterNumber] = useState(1);const [chapterDetails, setChapterDetails] = useState({
+  const [chapterDetails, setChapterDetails] = useState({
     title: '',
     content: ''
   });

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { getStories, getStoryById, Story, Chapter, getChaptersByStoryId, deleteStory, deleteChapter, updateChapter } from '../api/storiesAPI';
+import { getStories, getStoryById, Story, Chapter, getChaptersByStoryId, deleteStory, deleteChapter } from '../api/storiesAPI';
 import Chat from "./Chat";
 import CreateStory from './CreateStory';
 import CreateStoryDrawer from './CreateStoryDrawer';
@@ -98,7 +98,7 @@ const Dashboard: React.FC = () => {
         setIsEditChapterModalVisible(true);
       };
 
-    const handleChapterUpdated = async (updatedChapter: Chapter) => {
+    const handleChapterUpdated = async () => {
         // Update chapters list if the current story is selected
         if (selectedStory) {
           const updatedChapters = await getChaptersByStoryId(selectedStory.StoryID);
@@ -113,8 +113,6 @@ const Dashboard: React.FC = () => {
  
     const handleStoryClick = async (story: Story) => {
         try {
-            // Buscar la historia actualizada en el estado actual
-            const currentStory = stories.find(s => s.StoryID === story.StoryID);
             
             // Fetch full story details
             const fullStoryDetails = await getStoryById(story.StoryID);
@@ -131,26 +129,6 @@ const Dashboard: React.FC = () => {
             toggleDropdown();
         } catch (err) {
             console.error('Error fetching story details:', err);
-        }
-    };
-    
-    const toggleModal = () => {
-        setIsOpen(false);
-        setSelectedStory(null);
-    };
-
-    const handleCreateStory = (storyData: {
-        title: string;
-        genre: string;
-        maturityRating: string;
-        prologue: string;
-        image: File | null;
-    }) => {
-        console.log('New story created:', storyData);
-        
-        if (storyData.image) {
-            const formData = new FormData();
-            formData.append('image', storyData.image);
         }
     };
 
@@ -219,15 +197,29 @@ const Dashboard: React.FC = () => {
     };
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="dashboard">
+                <div className="loading-container">
+                    <div className="loading-spinner"></div>
+                    <p>Cargando historias...</p>
+                </div>
+            </div>
+        );
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return (
+            <div className="dashboard">
+                <div className="empty-state">
+                    <div className="empty-state-icon">⚠️</div>
+                    <h3>Error: {error}</h3>
+                </div>
+            </div>
+        );
     }
     
     return (
-      <div>
+      <div className="dashboard">
         <CreateStory 
           show={isCreateStoryModalVisible}
           onHide={() => setIsCreateStoryModalVisible(false)}
@@ -261,54 +253,66 @@ const Dashboard: React.FC = () => {
           onHide={() => setIsResetPasswordModalVisible(false)}
         />
 
-        <h1>Bienvenido a StoryCraft</h1>
+        <div className="dashboard-header">
+          <h1>📚 StoryCraft</h1>
+          {username && <p>Bienvenido, {username}!</p>}
+        </div>
+
         {username ? (
           <>
-            <p>Hola, {username}!</p>
             <Chat />
             
             <div>
-                <div className="d-flex justify-content-between align-items-center mb-3">
+                <div className="dashboard-toolbar">
                     <button 
-                        className="btn btn-primary"
+                        className="btn btn-primary btn-create-story"
                         onClick={() => setIsCreateStoryModalVisible(true)}
                     >
-                        <i className="fas fa-plus"></i> Crear nueva historia
+                        <i className="fas fa-plus"></i> Crear Nueva Historia
                     </button>
                     <div className="dropdown">
                         <button className="btn btn-secondary dropdown-toggle" onClick={toggleDropdown}>
-                            Usuario
+                            👤 Usuario
                         </button>
                         {isOpen && (
                             <div className="dropdown-menu show">
-                                <a className="dropdown-item" onClick={handleLogout}>Cerrar sesión</a>
-                                <a className="dropdown-item" onClick={() => setIsResetPasswordModalVisible(true)}>Cambiar contraseña</a>
+                                <a className="dropdown-item" onClick={handleLogout}>🚪 Cerrar sesión</a>
+                                <a className="dropdown-item" onClick={() => setIsResetPasswordModalVisible(true)}>🔑 Cambiar contraseña</a>
                             </div>
                         )}
                     </div>
                 </div>
 
-                <h2 className="mb-3">Historias Globales</h2>
+                <div className="stories-section">
+                    <h2>Historias Globales</h2>
 
-                <div className="d-flex flex-wrap justify-content-center">
-                    {stories.map((story) => (
-                        <div 
-                            key={story.StoryID} 
-                            className="card m-3" 
-                            style={{ width: '18rem', cursor: 'pointer' }} 
-                            onClick={() => handleStoryClick(story)}
-                        >
-                            <img 
-                                src={`${URL_IMAGE_STORY}${story.ImagePath}`} 
-                                className="card-img-top" 
-                                alt={story.Title} 
-                            />
-                            <div className="card-body">
-                                <h5 className="card-title">{story.Title}</h5>
-                                <p className="card-text">{story.Genre}</p>
-                            </div>
+                    {stories.length === 0 ? (
+                        <div className="empty-state">
+                            <div className="empty-state-icon">📖</div>
+                            <h3>No hay historias disponibles</h3>
+                            <p>¡Sé el primero en crear una historia!</p>
                         </div>
-                    ))}
+                    ) : (
+                        <div className="story-list">
+                            {stories.map((story) => (
+                                <div 
+                                    key={story.StoryID} 
+                                    className="card" 
+                                    onClick={() => handleStoryClick(story)}
+                                >
+                                    <img 
+                                        src={`${URL_IMAGE_STORY}${story.ImagePath}`} 
+                                        className="card-img-top" 
+                                        alt={story.Title} 
+                                    />
+                                    <div className="card-body">
+                                        <h5 className="card-title">{story.Title}</h5>
+                                        <p className="card-text">{story.Genre}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Story Details Modal */}
@@ -324,7 +328,6 @@ const Dashboard: React.FC = () => {
                         setStoryToEdit(story);
                         setIsEditModalVisible(true);
                     }}
-                    onStoryUpdated={handleStoryUpdated}
                 />
             )}
 

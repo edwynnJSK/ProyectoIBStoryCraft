@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useAuth } from "../context/AuthContext";
 import { createStory, Story } from '../api/storiesAPI';
+import '../styles/Modal.css';
 
 interface CreateStoryProps {
   show: boolean;
@@ -107,17 +108,18 @@ const CreateStory: React.FC<CreateStoryProps> = ({
   return (
     <Modal show={show} onHide={onHide} centered size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>Crear Nueva Historia</Modal.Title>
+        <Modal.Title>📝 Crear Nueva Historia</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {error && <div className="alert alert-danger">{error}</div>}
         
         <Form>
           <Form.Group className="mb-3">
-            <Form.Label>Título de la Historia</Form.Label>
+            <Form.Label>Título de la Historia *</Form.Label>
             <Form.Control
               type="text"
               name="title"
+              placeholder="Ingresa un título atractivo"
               value={storyDetails.title}
               onChange={handleStoryDetailsChange}
               required
@@ -129,14 +131,15 @@ const CreateStory: React.FC<CreateStoryProps> = ({
             <Form.Control
               as="textarea"
               name="description"
+              placeholder="Describe tu historia..."
               value={storyDetails.description}
               onChange={handleStoryDetailsChange}
-              rows={3}
+              rows={4}
             />
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Género</Form.Label>
+            <Form.Label>Género *</Form.Label>
             <Form.Select
               name="genre"
               value={storyDetails.genre}
@@ -144,16 +147,16 @@ const CreateStory: React.FC<CreateStoryProps> = ({
               required
             >
               <option value="">Seleccione un género</option>
-              <option value="Fantasy">Fantasía</option>
-              <option value="Sci-Fi">Ciencia Ficción</option>
-              <option value="Romance">Romance</option>
-              <option value="Mystery">Misterio</option>
-              <option value="Adventure">Aventura</option>
+              <option value="Fantasy">🔮 Fantasía</option>
+              <option value="Sci-Fi">🚀 Ciencia Ficción</option>
+              <option value="Romance">💕 Romance</option>
+              <option value="Mystery">🔍 Misterio</option>
+              <option value="Adventure">⚔️ Aventura</option>
             </Form.Select>
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Clasificación de Madurez</Form.Label>
+            <Form.Label>Clasificación de Madurez *</Form.Label>
             <Form.Select
               name="maturityRating"
               value={storyDetails.maturityRating}
@@ -161,10 +164,10 @@ const CreateStory: React.FC<CreateStoryProps> = ({
               required
             >
               <option value="">Seleccione clasificación</option>
-              <option value="G">G</option>
-              <option value="PG">PG</option>
-              <option value="PG-13">PG-13</option>
-              <option value="R">R</option>
+              <option value="G">G - Para todos</option>
+              <option value="PG">PG - Se sugiere compañía de padres</option>
+              <option value="PG-13">PG-13 - Mayores de 13 años</option>
+              <option value="R">R - Restringido</option>
             </Form.Select>
           </Form.Group>
 
@@ -176,15 +179,10 @@ const CreateStory: React.FC<CreateStoryProps> = ({
               onChange={handleStoryImageUpload}
             />
             {imagePreview && (
-              <div className="mt-2 text-center">
+              <div className="image-preview">
                 <img 
                   src={imagePreview} 
                   alt="Preview" 
-                  style={{ 
-                    maxWidth: '100%', 
-                    maxHeight: '300px', 
-                    objectFit: 'contain' 
-                  }} 
                 />
               </div>
             )}

@@ -7,9 +7,6 @@ WORKDIR /usr/src/app
 COPY ["package.json", "package-lock.json*", "./"]
 RUN npm install --silent
 
-# Copiar el archivo .env al contenedor
-COPY .env ./.env
-
 # Copiar Prisma y sincronizar esquema con la BD existente
 COPY prisma ./prisma/
 RUN npx prisma generate

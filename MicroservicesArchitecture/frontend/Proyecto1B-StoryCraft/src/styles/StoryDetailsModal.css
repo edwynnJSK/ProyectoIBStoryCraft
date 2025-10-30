@@ -1,30 +1,208 @@
+/* StoryDetailsModal.css - Estilos mejorados para el modal de detalles */
+
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    border-radius: 20px 20px 0 0;
+    position: relative;
+}
+
+.modal-title {
+    color: white;
+    font-weight: 700;
+    font-size: 1.75rem;
+    margin: 0;
 }
 
 .modal-header .close {
-    color: red;
-    background: none;
-    border: none;
     position: absolute;
-    right: 1rem;
-    top: 1rem;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-    font-size: 0; /* Remove the text/character */
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0;
+    padding: 0;
+}
+
+.modal-header .close::before {
+    content: '×';
+    font-size: 2rem;
+    line-height: 1;
+    color: white;
 }
 
 .modal-header .close:hover {
-    opacity: 1;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) rotate(90deg);
+}
+
+.modal-body {
+    padding: 2rem;
+    background: white;
+}
+
+.modal-body .row {
+    display: flex;
+    gap: 2rem;
+}
+
+.modal-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.modal-body img:hover {
+    transform: scale(1.02);
+}
+
+.modal-body p {
+    color: var(--text-dark);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.modal-body .text-muted {
+    color: var(--text-light) !important;
+    font-style: italic;
 }
 
 .modal-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background-color: var(--light-bg);
+    border-top: 2px solid var(--border-color);
+    gap: 1rem;
+    flex-wrap: wrap;
+    border-radius: 0 0 20px 20px;
+}
+
+.modal-footer .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.modal-footer .btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+}
+
+.modal-footer .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 80, 10, 0.3);
+}
+
+.modal-footer .btn-secondary {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.modal-footer .btn-secondary:hover {
+    background: #34495e;
+    transform: translateY(-2px);
+}
+
+.modal-footer .btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.modal-footer .btn-danger:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+}
+
+.modal-footer .btn-warning {
+    background: var(--warning-color);
+    color: white;
+}
+
+.modal-footer .btn-warning:hover {
+    background: #e67e22;
+    transform: translateY(-2px);
+}
+
+/* Chapters List dentro del modal */
+.chapters-list {
+    margin-top: 1.5rem;
+}
+
+.chapters-list h4 {
+    color: var(--secondary-color);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.chapter-item {
+    background: var(--light-bg);
     padding: 1rem;
-    gap: 2rem;
-    margin-top: 2rem; /* Adds space between buttons */
+    border-radius: 10px;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--primary-color);
+}
+
+.chapter-item:hover {
+    background: white;
+    transform: translateX(5px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.chapter-item h5 {
+    color: var(--secondary-color);
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-header {
+        padding: 1.5rem;
+    }
+    
+    .modal-title {
+        font-size: 1.5rem;
+        padding-right: 3rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .modal-body .row {
+        flex-direction: column;
+    }
+    
+    .modal-footer {
+        padding: 1rem 1.5rem;
+        flex-direction: column;
+    }
+    
+    .modal-footer .btn {
+        width: 100%;
+    }
 }

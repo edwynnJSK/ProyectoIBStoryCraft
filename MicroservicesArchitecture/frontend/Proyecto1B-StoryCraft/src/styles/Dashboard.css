@@ -1,71 +1,426 @@
-/* Estilo principal */
+/* Dashboard.css - Estilos mejorados para el Dashboard */
+
 .dashboard {
-    padding: 20px;
+  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* Header del Dashboard */
+.dashboard-header {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-out;
+}
+
+.dashboard-header h1 {
+  color: var(--secondary-color);
+  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dashboard-header p {
+  color: var(--text-light);
+  font-size: 1.1rem;
+  margin-bottom: 0;
+}
+
+/* Toolbar */
+.dashboard-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.btn-create-story {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 80, 10, 0.3);
+}
+
+.btn-create-story:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 80, 10, 0.4);
+}
+
+.btn-create-story i {
+  font-size: 1.2rem;
+}
+
+/* Dropdown Usuario */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  background: var(--secondary-color);
+  border: none;
+  padding: 0.875rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dropdown-toggle::after {
+  margin-left: 0.5rem;
+}
+
+.dropdown-toggle:hover {
+  background: #34495e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-menu {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.dropdown-item:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Sección de historias */
+.stories-section {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.6s ease-out;
+}
+
+.stories-section h2 {
+  color: var(--secondary-color);
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.stories-section h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  border-radius: 2px;
+}
+
+/* Grid de historias */
+.story-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 1rem 0;
+}
+
+/* Tarjetas de historia */
+.card {
+  border-radius: 15px;
+  border: none;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card:hover .card-img-top {
+  transform: scale(1.1);
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-text {
+  color: var(--text-light);
+  font-weight: 500;
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--light-bg);
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content-custom {
+  background: white;
+  border-radius: 20px;
+  max-width: 900px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content-custom .modal-content {
+  border: none;
+  border-radius: 20px;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: white;
+  border-radius: 20px 20px 0 0;
+  padding: 2rem;
+  border-bottom: none;
+}
+
+.modal-title {
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: white;
+}
+
+.modal-header .close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-header .close::before {
+  content: '×';
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.modal-header .close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.modal-body img {
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-footer {
+  padding: 1.5rem 2rem;
+  background-color: var(--light-bg);
+  border-top: 2px solid var(--border-color);
+  border-radius: 0 0 20px 20px;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.modal-footer .btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: var(--text-light);
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid var(--border-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-light);
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  color: var(--text-light);
+  margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
   }
   
-  /* Botones */
-  .dashboard .btn-create-story {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 15px;
+  .dashboard-header {
+    padding: 1.5rem;
   }
   
-  .dashboard .dropdown .dropdown-menu {
-    position: absolute;
-    z-index: 1050;
+  .dashboard-header h1 {
+    font-size: 2rem;
   }
   
-  /* Tarjetas */
-  .dashboard .card {
-    width: 18rem;
-    margin: 15px;
-    cursor: pointer;
+  .dashboard-toolbar {
+    flex-direction: column;
+    align-items: stretch;
   }
   
-  .dashboard .card img {
-    max-height: 180px;
-    object-fit: cover;
-  }
-  
-  .dashboard .card-title {
-    font-size: 1.25rem;
-  }
-  
-  /* Modales */
-  .modal-overlay {
-    display: block;
-    background-color: rgba(0, 0, 0, 0.5);
-    position: fixed;
-    top: 0;
-    left: 0;
+  .btn-create-story,
+  .dropdown-toggle {
     width: 100%;
-    height: 100%;
-    z-index: 1000;
+    justify-content: center;
+  }
+  
+  .story-list {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .stories-section {
+    padding: 1.5rem;
   }
   
   .modal-content-custom {
-    max-width: 800px;
-    margin: 50px auto;
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
+    width: 95%;
   }
   
-  .modal-body img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 5px;
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .modal-footer {
+    flex-direction: column;
   }
   
-  .modal-footer .btn-primary {
-    margin-right: auto;
+  .modal-footer .btn {
+    width: 100%;
   }
-  
-  /* Historias */
-  .dashboard .story-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+}
   

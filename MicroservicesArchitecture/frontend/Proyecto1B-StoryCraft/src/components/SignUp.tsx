@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Form, Button, Container, Alert, Row, Col } from "react-bootstrap";
+import { Form, Button, Alert } from "react-bootstrap";
 import { SignupForm } from "../interfaces/user";
 import { createUser } from "../api/usersAPI";
 import { useNavigate } from "react-router-dom";
+import "../styles/Auth.css";
 
 const Signup: React.FC = () => {
   const [formData, setFormData] = useState<SignupForm>({
@@ -87,118 +88,117 @@ const Signup: React.FC = () => {
     if (error) {
       const timer = setTimeout(() => {
         setError("");
-      }, 3000);
+      }, 4000);
 
       return () => clearTimeout(timer);
     }
   }, [error]);
   
   return (
-    <Container className="mt-5" style={{ maxWidth: "600px" }}>
-      <h1 className="text-center text-primary">Únete</h1>
-      <br />
-      <div style={{ 
-        position: "relative",
-        height: "60px",
-        width: "100%",
-        marginBottom: "20px"
-       }}>
-        {error && (
-          <Alert variant="danger" className="text-center" style={{ 
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            wordWrap: "break-word",
-            zIndex: 1
-           }}>
-            {error}
-          </Alert>
-        )}
-        {success && (
-          <Alert variant="success" className="text-center" style={{ 
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 1
-          }}>
-            ¡Usuario creado exitosamente!
-          </Alert>
-        )}
-      </div>
+    <div className="auth-container">
+      <div className="auth-box">
+        <div className="auth-logo">
+          <div className="auth-logo-icon">✨</div>
+        </div>
+        
+        <h1>Crear Cuenta</h1>
+        <p className="auth-subtitle">Únete a StoryCraft hoy</p>
+        
+        <div className="alert-container">
+          {error && (
+            <Alert variant="danger" className="text-center">
+              {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert variant="success" className="text-center">
+              ¡Usuario creado exitosamente! Redirigiendo...
+            </Alert>
+          )}
+        </div>
 
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3" controlId="username">
-          <Col sm="4" className="text-start">
-            <Form.Label>Usuario</Form.Label>
-          </Col>
-          <Form.Control
-            type="text"
-            name="Username"
-            value={formData.Username}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="form-group">
+            <Form.Label>Nombre de Usuario</Form.Label>
+            <Form.Control
+              type="text"
+              name="Username"
+              placeholder="Tu nombre de usuario"
+              value={formData.Username}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3" controlId="email">
-          <Col sm="4" className="text-start">
-            <Form.Label>Email</Form.Label>
-          </Col>
-          <Form.Control
-            name="Email"
-            value={formData.Email}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+          <Form.Group className="form-group">
+            <Form.Label>Correo Electrónico</Form.Label>
+            <Form.Control
+              type="email"
+              name="Email"
+              placeholder="tu@email.com"
+              value={formData.Email}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3" controlId="password">
-          <Col sm="4" className="text-start">
+          <Form.Group className="form-group">
             <Form.Label>Contraseña</Form.Label>
-          </Col>
-          <Form.Control
-            type="password"
-            name="Password"
-            value={formData.Password}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+            <Form.Control
+              type="password"
+              name="Password"
+              placeholder="••••••••"
+              value={formData.Password}
+              onChange={handleChange}
+              required
+            />
+            <div className="password-requirements">
+              <small>La contraseña debe contener:</small>
+              <ul>
+                <li>Mínimo 8 caracteres</li>
+                <li>Al menos una letra mayúscula</li>
+                <li>Al menos un número</li>
+              </ul>
+            </div>
+          </Form.Group>
 
-        <Form.Group className="mb-3" controlId="confirmPassword">
-          <Col sm="4" className="text-start">
-            <Form.Label style={{ whiteSpace: 'nowrap' }}>Confirmar Contraseña</Form.Label>
-          </Col>
-          <Form.Control
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => {
-              if (containsSpecialChars(e.target.value)) {
-                setError("No se permiten caracteres especiales");
-                return;
-              }
-              setConfirmPassword(e.target.value);
-              setError(null);
-            }}
-            required
-          />
-        </Form.Group>
+          <Form.Group className="form-group">
+            <Form.Label>Confirmar Contraseña</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => {
+                if (containsSpecialChars(e.target.value)) {
+                  setError("No se permiten caracteres especiales");
+                  return;
+                }
+                setConfirmPassword(e.target.value);
+                setError(null);
+              }}
+              required
+            />
+          </Form.Group>
 
-        <Button variant="primary" type="submit" className="w-100">
-          Sign Up
-        </Button>
-      </Form>
-      <div className="text-center mt-3">
-        <p>
-          ¿Ya tienes una cuenta?{" "}
-          <Button variant="link" onClick={() => navigate("/login")}>
-            Login
+          <Button type="submit" className="auth-submit-btn">
+            Crear Cuenta
           </Button>
-        </p>
+        </Form>
+        
+        <div className="auth-link">
+          <p>
+            ¿Ya tienes una cuenta?{" "}
+            <Button 
+              variant="link" 
+              className="btn-link"
+              onClick={() => navigate("/login")}
+            >
+              Inicia sesión aquí
+            </Button>
+          </p>
+        </div>
       </div>
-    </Container>
+    </div>
   );
 };
 

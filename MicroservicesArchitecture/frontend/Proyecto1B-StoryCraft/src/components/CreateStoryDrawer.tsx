@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { createChapter, Chapter, Story } from '../api/storiesAPI';
+import { createChapter, Story } from '../api/storiesAPI';
 
 interface CreateStoryDrawerProps {
   show: boolean;
@@ -18,7 +17,6 @@ const CreateStoryDrawer: React.FC<CreateStoryDrawerProps> = ({
   onDashboardRefresh,  // Add new prop
   onChapterCreated
 }) => {
-  const navigate = useNavigate();
   const [chapterNumber, setChapterNumber] = useState(1);
   const [chapterDetails, setChapterDetails] = useState({
     title: '',

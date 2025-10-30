@@ -1,6 +1,7 @@
 import React from 'react';
 import { Chapter } from '../api/storiesAPI';
 import { URL_IMAGE_STORY } from '../interfaces/stories';
+import '../styles/ChaptersList.css';
 
 interface ChaptersListProps {
     chapters: Chapter[];
@@ -12,29 +13,35 @@ const ChaptersList: React.FC<ChaptersListProps> = ({
     onChapterClick 
 }) => {
     if (chapters.length === 0) {
-        return <p>No chapters yet</p>;
+        return (
+            <div className="chapters-empty">
+                <div className="chapters-empty-icon">📑</div>
+                <p>No hay capítulos disponibles</p>
+            </div>
+        );
     }
 
     return (
-        <div>
-            <h6>Chapters</h6>
-            <div className="row">
+        <div className="chapters-container">
+            <div className="chapters-header">
+                <h6>📖 Capítulos</h6>
+                <span className="chapters-count">{chapters.length}</span>
+            </div>
+            <div className="chapters-grid">
                 {chapters.map(chapter => (
-                    <div key={chapter.ChapterID} className="col-md-4 mb-3">
-                        <button 
-                            className="btn btn-outline-primary w-100"
-                            onClick={() => onChapterClick(chapter)}
-                        >
-                            <div className="d-flex flex-column align-items-center">
-                                <img 
-                                    src={`${URL_IMAGE_STORY}${chapter.ImagePath}`} 
-                                    alt={chapter.Title} 
-                                    className="img-fluid mb-2"
-                                    style={{ maxHeight: '150px', objectFit: 'cover' }}
-                                />
-                                {chapter.Title}
-                            </div>
-                        </button>
+                    <div 
+                        key={chapter.ChapterID} 
+                        className="chapter-card"
+                        onClick={() => onChapterClick(chapter)}
+                    >
+                        <img 
+                            src={`${URL_IMAGE_STORY}${chapter.ImagePath}`} 
+                            alt={chapter.Title} 
+                            className="chapter-card-image"
+                        />
+                        <div className="chapter-card-body">
+                            <h5 className="chapter-card-title">{chapter.Title}</h5>
+                        </div>
                     </div>
                 ))}
             </div>

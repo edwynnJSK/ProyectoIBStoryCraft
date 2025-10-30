@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../api/usersAPI";
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Container, Alert, Col } from "react-bootstrap";
+import { Form, Button, Alert } from "react-bootstrap";
+import "../styles/Auth.css";
 
 const LoginForm: React.FC = () => {
   const { login } = useAuth();
@@ -27,64 +28,73 @@ const LoginForm: React.FC = () => {
       setError("El email o contraseña son incorrectos");
     }
   };
+  
   useEffect(() => {
     if (error) {
       const timer = setTimeout(() => {
         setError("");
-      }, 2000); // Elimina el mensaje después de 2 segundos
+      }, 3000); // Elimina el mensaje después de 3 segundos
 
       return () => clearTimeout(timer); // Limpia el temporizador
     }
   }, [error]);
 
   return (
-    <Container className="mt-5" style={{ maxWidth: "400px" }}>
-      <h1 className="text-center text-primary">Iniciar sesión</h1>
-      <br />
-      {error && <Alert variant="danger">{error}</Alert>}
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="formEmail" className="mb-3">
-          <Col m="4" className="text-start">
-            <Form.Label>Email</Form.Label>
-          </Col>
-          <Form.Control
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </Form.Group>
+    <div className="auth-container">
+      <div className="auth-box">
+        <div className="auth-logo">
+          <div className="auth-logo-icon">📚</div>
+        </div>
+        
+        <h1>Bienvenido</h1>
+        <p className="auth-subtitle">Inicia sesión en StoryCraft</p>
+        
+        <div className="alert-container">
+          {error && <Alert variant="danger">{error}</Alert>}
+        </div>
+        
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="form-group">
+            <Form.Label>Correo Electrónico</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="tu@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group controlId="formPassword" className="mb-3">
-          <Col m="4" className="text-start">
+          <Form.Group className="form-group">
             <Form.Label>Contraseña</Form.Label>
-          </Col>
-          <Form.Control
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </Form.Group>
+            <Form.Control
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </Form.Group>
 
-        <Button variant="primary" type="submit" className="w-100">
-          Login
-        </Button>
-      </Form>
-      <div className="text-center mt-3">
-        <p>
-          ¿No tienes una cuenta?{" "}
-          <Button
-            variant="link"
-            onClick={() => {
-              navigate("/signup");
-            }}
-          >
-            Sign Up
+          <Button type="submit" className="auth-submit-btn">
+            Iniciar Sesión
           </Button>
-        </p>
+        </Form>
+        
+        <div className="auth-link">
+          <p>
+            ¿No tienes una cuenta?{" "}
+            <Button
+              variant="link"
+              className="btn-link"
+              onClick={() => navigate("/signup")}
+            >
+              Regístrate aquí
+            </Button>
+          </p>
+        </div>
       </div>
-    </Container>
+    </div>
   );
 };
 
